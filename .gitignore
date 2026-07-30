@@ -59,6 +59,10 @@ backend/README.md
 backend/HOW_TO_RUN_BACKEND.md
 backend/RUN_GUIDE.md
 frontend/README.md
+HOW_TO_RUN.md
+
+# Batch files
+*.bat
 
 # Editor directories and files
 .vscode/*
