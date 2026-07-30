@@ -4,7 +4,7 @@ from sqlalchemy import func
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 from app.database.session import get_db
-from app.models.models import Attendance, User, Camera
+from app.models.models import AttendanceModel as Attendance, UserModel as User, CameraModel as Camera
 
 router = APIRouter(prefix="/replay", tags=["replay"])
 

@@ -1,0 +1,50 @@
+{
+  "short_name": "BioAuth Pro",
+  "name": "BioAuth Pro - Facial Recognition Attendance System",
+  "description": "Enterprise Attendance Management with AI-powered Facial Recognition",
+  "icons": [
+    {
+      "src": "/logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#1976d2",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["business", "productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "type": "image/png",
+      "sizes": "1280x720"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Live Recognition",
+      "short_name": "Recognition",
+      "description": "Start live facial recognition",
+      "url": "/live-recognition",
+      "icons": [{ "src": "/logo192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Attendance",
+      "short_name": "Attendance",
+      "description": "View attendance records",
+      "url": "/attendance",
+      "icons": [{ "src": "/logo192.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
+}

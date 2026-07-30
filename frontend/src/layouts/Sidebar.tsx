@@ -26,7 +26,15 @@ import {
   Bell,
   FileEdit,
   TrendingUp,
-  Target
+  Target,
+  Psychology,
+  QrCode2,
+  VerifiedUser,
+  AdminPanelSettings,
+  Insights,
+  MonitorHeart,
+  Receipt,
+  CloudSync
 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { UserRole } from '../types';
@@ -136,6 +144,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
       title: 'Intelligence & Admin',
       items: [
         { 
+          label: 'AI Assistant', 
+          path: '/ai-assistant', 
+          icon: <Psychology className="w-5 h-5" />,
+          badge: 'AI',
+          allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher'] 
+        },
+        { 
           label: 'Attendance Heatmaps', 
           path: '/heatmaps', 
           icon: <Flame className="w-5 h-5" />,
@@ -169,6 +184,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
         },
         { 
+          label: 'AI Reports', 
+          path: '/ai-reports', 
+          icon: <Insights className="w-5 h-5" />,
+          badge: 'NEW',
+          allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher'] 
+        },
+        { 
           label: 'AI Insights', 
           path: '/ai-insights', 
           icon: <Brain className="w-5 h-5" />,
@@ -182,12 +204,59 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher', 'security_officer'] 
         },
         { label: 'Reports', path: '/reports', icon: <FileText className="w-5 h-5" /> },
-        { label: 'Notifications', path: '/notifications', icon: <Bell className="w-5 h-5" /> },
+        { label: 'Notifications', path: '/notifications', icon: <Bell className="w-5 h-5" /> }
+      ],
+    },
+    {
+      title: 'Security & System',
+      items: [
+        { 
+          label: 'Security Center', 
+          path: '/security-center', 
+          icon: <AdminPanelSettings className="w-5 h-5" />,
+          badge: 'NEW',
+          allowedRoles: ['super_admin', 'security_officer'] 
+        },
+        { 
+          label: 'QR Backup', 
+          path: '/qr-backup', 
+          icon: <QrCode2 className="w-5 h-5" />,
+          badge: 'NEW',
+          allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
+        },
+        { 
+          label: 'Multi-Factor Auth', 
+          path: '/multi-factor', 
+          icon: <VerifiedUser className="w-5 h-5" />,
+          badge: 'NEW',
+          allowedRoles: ['super_admin'] 
+        },
+        { 
+          label: 'System Health', 
+          path: '/system-health', 
+          icon: <MonitorHeart className="w-5 h-5" />,
+          badge: 'NEW',
+          allowedRoles: ['super_admin'] 
+        },
+        { 
+          label: 'Audit Trail', 
+          path: '/comprehensive-audit', 
+          icon: <Receipt className="w-5 h-5" />,
+          badge: 'NEW',
+          allowedRoles: ['super_admin', 'hr_admin'] 
+        },
         { 
           label: 'Audit Logs', 
           path: '/audit-logs', 
           icon: <History className="w-5 h-5" />,
           allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
+        },
+        { 
+          label: 'Integrations', 
+          path: '/integrations', 
+          icon: <CloudSync className="w-5 h-5" />,
+          badge: 'NEW',
+          allowedRoles: ['super_admin'] 
         },
         { 
           label: 'System Settings', 

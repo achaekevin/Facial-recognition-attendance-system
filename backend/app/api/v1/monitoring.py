@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from typing import Dict, List
 from app.database.session import get_db
-from app.models.models import User, Attendance, Camera, UnknownFace
+# from app.models.models import UserModel as User, AttendanceModel as Attendance, CameraModel as Camera, UnknownFaceModel as UnknownFace
+# Note: Models import commented out temporarily - uncomment when models are available
 from app.websocket.manager import ws_manager
 
 router = APIRouter(prefix="/monitoring", tags=["monitoring"])

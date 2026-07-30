@@ -105,7 +105,7 @@ class OfflineSyncManager:
                 record["sync_status"] = "syncing"
                 
                 # Import here to avoid circular dependency
-                from app.models.models import Attendance, User
+                from app.models.models import AttendanceModel as Attendance, UserModel as User
                 
                 # Create attendance record
                 attendance_data = record["data"]

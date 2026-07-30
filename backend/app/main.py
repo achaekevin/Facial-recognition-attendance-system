@@ -37,6 +37,14 @@ from app.api.v1.attendance_corrections import router as attendance_corrections_r
 from app.api.v1.advanced_analytics import router as advanced_analytics_router
 from app.api.v1.offline_sync import router as offline_sync_router
 from app.api.v1.recognition_accuracy import router as recognition_accuracy_router
+from app.api.v1.ai_assistant import router as ai_assistant_router
+from app.api.v1.qr_backup import router as qr_backup_router
+from app.api.v1.multi_factor import router as multi_factor_router
+from app.api.v1.security_center import router as security_center_router
+from app.api.v1.ai_reports import router as ai_reports_router
+from app.api.v1.system_health import router as system_health_router
+from app.api.v1.audit_trail import router as audit_trail_router
+from app.api.v1.integrations import router as integrations_router
 from scripts.seed import seed_data
 
 limiter = Limiter(key_func=get_remote_address)
@@ -103,6 +111,14 @@ app.include_router(attendance_corrections_router, prefix=settings.API_V1_STR)
 app.include_router(advanced_analytics_router, prefix=settings.API_V1_STR)
 app.include_router(offline_sync_router, prefix=settings.API_V1_STR)
 app.include_router(recognition_accuracy_router, prefix=settings.API_V1_STR)
+app.include_router(ai_assistant_router, prefix=settings.API_V1_STR)
+app.include_router(qr_backup_router, prefix=settings.API_V1_STR)
+app.include_router(multi_factor_router, prefix=settings.API_V1_STR)
+app.include_router(security_center_router, prefix=settings.API_V1_STR)
+app.include_router(ai_reports_router, prefix=settings.API_V1_STR)
+app.include_router(system_health_router, prefix=settings.API_V1_STR)
+app.include_router(audit_trail_router, prefix=settings.API_V1_STR)
+app.include_router(integrations_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def root():

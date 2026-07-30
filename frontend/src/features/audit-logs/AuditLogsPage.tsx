@@ -1,78 +1,219 @@
-import React from 'react';
-import { ColumnDef } from '@tanstack/react-table';
-import { AuditLogEntry } from '../../types';
-import { DataTable } from '../../components/data-display/DataTable';
-import { Badge } from '../../components/ui/Badge';
-import { useBiometricStore } from '../../store/useBiometricStore';
-import { History, ShieldCheck, Terminal } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+  Box, Card, CardContent, Typography, Table, TableBody, TableCell,
+  TableContainer, TableHead, TableRow, Chip, TextField, Grid,
+  FormControl, InputLabel, Select, MenuItem, Button, Pagination
+} from '@mui/material';
+import { History, Download, FilterList } from '@mui/icons-material';
 
-export const AuditLogsPage: React.FC = () => {
-  const { auditLogs } = useBiometricStore();
+const AuditLogsPage: React.FC = () => {
+  const [logs, setLogs] = useState<any[]>([]);
+  const [filters, setFilters] = useState({
+    user_id: '',
+    entity_type: '',
+    action: '',
+    days: 7
+  });
+  const [page, setPage] = useState(1);
+  const [stats, setStats] = useState<any>(null);
 
-  const columns: ColumnDef<AuditLogEntry>[] = [
-    {
-      accessorKey: 'timestamp',
-      header: 'Timestamp',
-      cell: ({ row }) => (
-        <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
-          {row.original.timestamp}
-        </span>
-      ),
-    },
-    {
-      accessorKey: 'actorName',
-      header: 'Administrator / Actor',
-      cell: ({ row }) => (
-        <div>
-          <p className="font-semibold text-slate-900 dark:text-white text-xs">{row.original.actorName}</p>
-          <p className="text-[10px] text-slate-400 uppercase font-mono">{row.original.actorRole}</p>
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'action',
-      header: 'Action Event',
-      cell: ({ row }) => (
-        <Badge variant="primary" className="font-mono text-[10px]">
-          {row.original.action}
-        </Badge>
-      ),
-    },
-    {
-      accessorKey: 'details',
-      header: 'Event Description',
-      cell: ({ row }) => (
-        <p className="text-xs text-slate-700 dark:text-slate-300 max-w-md truncate">
-          {row.original.details}
-        </p>
-      ),
-    },
-    {
-      accessorKey: 'ipAddress',
-      header: 'IP Address',
-      cell: ({ row }) => (
-        <span className="font-mono text-xs text-slate-400">{row.original.ipAddress}</span>
-      ),
-    },
-  ];
+  useEffect(() => {
+    fetchLogs();
+    fetchStats();
+  }, [filters, page]);
+
+  const fetchLogs = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (filters.user_id) params.append('user_id', filters.user_id);
+      if (filters.entity_type) params.append('entity_type', filters.entity_type);
+      if (filters.action) params.append('action', filters.action);
+      params.append('days', filters.days.toString());
+      params.append('limit', '50');
+
+      const response = await fetch(`http://localhost:8000/api/v1/audit-trail/logs?${params}`);
+      const data = await response.json();
+      setLogs(data.logs || []);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/audit-trail/statistics?days=${filters.days}`);
+      const data = await response.json();
+      setStats(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/v1/audit-trail/export?format=json&days=${filters.days}`);
+      const data = await response.json();
+      const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `audit-logs-${new Date().toISOString()}.json`;
+      a.click();
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-          <History className="w-6 h-6 text-primary" /> Immutable Security Audit Logs
-        </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          Trace administrative changes, camera configuration edits, and manual attendance overrides.
-        </p>
-      </div>
+    <Box sx={{ p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box>
+          <Typography variant="h4" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <History /> Audit Trail
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            Comprehensive action logging with IP tracking
+          </Typography>
+        </Box>
+        <Button startIcon={<Download />} onClick={handleExport} variant="outlined">
+          Export Logs
+        </Button>
+      </Box>
 
-      <DataTable
-        columns={columns}
-        data={auditLogs}
-        searchPlaceholder="Search audit logs by actor, action, IP..."
-        exportFilename="security_audit_logs"
-      />
-    </div>
+      {stats && (
+        <Grid container spacing={2} sx={{ mb: 3 }}>
+          <Grid item xs={6} md={3}>
+            <Card><CardContent>
+              <Typography color="textSecondary">Total Actions</Typography>
+              <Typography variant="h4">{stats.total_actions}</Typography>
+            </CardContent></Card>
+          </Grid>
+          <Grid item xs={6} md={3}>
+            <Card><CardContent>
+              <Typography color="textSecondary">Unique Users</Typography>
+              <Typography variant="h4">{stats.top_users?.length || 0}</Typography>
+            </CardContent></Card>
+          </Grid>
+          <Grid item xs={6} md={3}>
+            <Card><CardContent>
+              <Typography color="textSecondary">Entity Types</Typography>
+              <Typography variant="h4">{Object.keys(stats.by_entity_type || {}).length}</Typography>
+            </CardContent></Card>
+          </Grid>
+          <Grid item xs={6} md={3}>
+            <Card><CardContent>
+              <Typography color="textSecondary">Action Types</Typography>
+              <Typography variant="h4">{Object.keys(stats.by_action || {}).length}</Typography>
+            </CardContent></Card>
+          </Grid>
+        </Grid>
+      )}
+
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+            <FilterList />
+            <Typography variant="h6">Filters</Typography>
+          </Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={3}>
+              <TextField
+                fullWidth
+                label="User ID"
+                value={filters.user_id}
+                onChange={(e) => setFilters({ ...filters, user_id: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Entity Type</InputLabel>
+                <Select
+                  value={filters.entity_type}
+                  label="Entity Type"
+                  onChange={(e) => setFilters({ ...filters, entity_type: e.target.value })}
+                >
+                  <MenuItem value="">All</MenuItem>
+                  <MenuItem value="face">Face</MenuItem>
+                  <MenuItem value="attendance">Attendance</MenuItem>
+                  <MenuItem value="user">User</MenuItem>
+                  <MenuItem value="camera">Camera</MenuItem>
+                  <MenuItem value="setting">Setting</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Action</InputLabel>
+                <Select
+                  value={filters.action}
+                  label="Action"
+                  onChange={(e) => setFilters({ ...filters, action: e.target.value })}
+                >
+                  <MenuItem value="">All</MenuItem>
+                  <MenuItem value="create">Create</MenuItem>
+                  <MenuItem value="update">Update</MenuItem>
+                  <MenuItem value="delete">Delete</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <FormControl fullWidth>
+                <InputLabel>Time Period</InputLabel>
+                <Select
+                  value={filters.days}
+                  label="Time Period"
+                  onChange={(e) => setFilters({ ...filters, days: Number(e.target.value) })}
+                >
+                  <MenuItem value={1}>Last 24 hours</MenuItem>
+                  <MenuItem value={7}>Last 7 days</MenuItem>
+                  <MenuItem value={30}>Last 30 days</MenuItem>
+                  <MenuItem value={90}>Last 90 days</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>Audit Logs</Typography>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Timestamp</TableCell>
+                  <TableCell>User</TableCell>
+                  <TableCell>Action</TableCell>
+                  <TableCell>Entity</TableCell>
+                  <TableCell>IP Address</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {logs.map((log) => (
+                  <TableRow key={log.id}>
+                    <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
+                    <TableCell>{log.user_id}</TableCell>
+                    <TableCell>
+                      <Chip label={log.action} size="small" color="primary" />
+                    </TableCell>
+                    <TableCell>
+                      {log.entity_type}
+                      {log.entity_id && ` (${log.entity_id})`}
+                    </TableCell>
+                    <TableCell>{log.ip_address}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+            <Pagination count={Math.ceil(logs.length / 50)} page={page} onChange={(_, p) => setPage(p)} />
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
+
+export default AuditLogsPage;

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List
 from app.database.session import get_db
-from app.models.models import User, Attendance
+from app.models.models import UserModel as User, AttendanceModel as Attendance
 from app.websocket.manager import ws_manager
 
 router = APIRouter(prefix="/attendance-corrections", tags=["attendance-corrections"])

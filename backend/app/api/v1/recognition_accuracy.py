@@ -4,7 +4,7 @@ from sqlalchemy import func, and_, case
 from datetime import datetime, timedelta
 from typing import Dict, List
 from app.database.session import get_db
-from app.models.models import Attendance, User
+from app.models.models import AttendanceModel as Attendance, UserModel as User
 
 router = APIRouter(prefix="/recognition-accuracy", tags=["recognition-accuracy"])
 

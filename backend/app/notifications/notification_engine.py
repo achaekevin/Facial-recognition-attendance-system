@@ -159,7 +159,7 @@ class NotificationEngine:
         """
         Check for late arrivals and send notifications
         """
-        from app.models.models import User, Attendance
+        from app.models.models import UserModel as User, AttendanceModel as Attendance
         
         try:
             today = current_time.date()

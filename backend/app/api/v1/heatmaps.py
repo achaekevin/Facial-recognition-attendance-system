@@ -4,7 +4,7 @@ from sqlalchemy import func, and_
 from datetime import datetime, timedelta
 from typing import Dict, List
 from app.database.session import get_db
-from app.models.models import Attendance, Camera, User, Department
+from app.models.models import AttendanceModel as Attendance, CameraModel as Camera, UserModel as User, DepartmentModel as Department
 
 router = APIRouter(prefix="/heatmaps", tags=["heatmaps"])
 

@@ -4,7 +4,7 @@ from sqlalchemy import func, and_, case
 from datetime import datetime, timedelta, time
 from typing import Dict, List
 from app.database.session import get_db
-from app.models.models import Attendance, User, Camera, Department
+from app.models.models import AttendanceModel as Attendance, UserModel as User, CameraModel as Camera, DepartmentModel as Department
 
 router = APIRouter(prefix="/advanced-analytics", tags=["advanced-analytics"])
 

@@ -16,6 +16,14 @@ import { NotificationsPage } from '../features/notifications/NotificationsPage';
 import AttendanceCorrectionWorkflowPage from '../features/corrections/AttendanceCorrectionWorkflowPage';
 import AdvancedAnalyticsDashboard from '../features/analytics/AdvancedAnalyticsDashboard';
 import RecognitionAccuracyDashboard from '../features/accuracy/RecognitionAccuracyDashboard';
+import AIAssistantPage from '../features/ai-assistant/AIAssistantPage';
+import QRBackupPage from '../features/qr-backup/QRBackupPage';
+import MultiFactorPage from '../features/multi-factor/MultiFactorPage';
+import SecurityCenterPage from '../features/security-center/SecurityCenterPage';
+import AIReportsPage from '../features/ai-reports/AIReportsPage';
+import SystemHealthPage from '../features/system-health/SystemHealthPage';
+import AuditLogsPage from '../features/audit-logs/AuditLogsPage';
+import IntegrationsPage from '../features/integrations/IntegrationsPage';
 import { AttendancePage } from '../features/attendance/AttendancePage';
 import { UserListPage } from '../features/users/UserListPage';
 import { UserProfilePage } from '../features/users/UserProfilePage';
@@ -151,6 +159,78 @@ export const AppRoutes: React.FC = () => {
           element={
             <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'security_officer']}>
               <RecognitionAccuracyDashboard />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="ai-assistant"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'lecturer_teacher']}>
+              <AIAssistantPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="qr-backup"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'security_officer']}>
+              <QRBackupPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="multi-factor"
+          element={
+            <RoleGuard allowedRoles={['super_admin']}>
+              <MultiFactorPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="security-center"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'security_officer']}>
+              <SecurityCenterPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="ai-reports"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'lecturer_teacher']}>
+              <AIReportsPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="system-health"
+          element={
+            <RoleGuard allowedRoles={['super_admin']}>
+              <SystemHealthPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="comprehensive-audit"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin']}>
+              <AuditLogsPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="integrations"
+          element={
+            <RoleGuard allowedRoles={['super_admin']}>
+              <IntegrationsPage />
             </RoleGuard>
           }
         />
