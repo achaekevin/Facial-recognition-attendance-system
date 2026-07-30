@@ -17,6 +17,13 @@ class AIAssistant:
         
         # Query patterns and their handlers
         self.patterns = [
+            # User registration check
+            (r"(is|check|find|lookup|search|did i register)\s+(student|user|employee)?\s*([a-zA-Z0-9\s-]+)", self._handle_user_registration_check),
+            (r"registered.*", self._handle_user_registration_check),
+
+            # Leave requests
+            (r"leave.*", self._handle_leave_requests),
+
             # Late arrivals
             (r"who (arrived|came) late (today|yesterday|this week)", self._handle_late_arrivals),
             (r"late arrivals? (today|yesterday|this week)", self._handle_late_arrivals),
@@ -52,6 +59,67 @@ class AIAssistant:
             (r"when.*most.*arrive", self._handle_peak_times),
         ]
     
+    def _handle_user_registration_check(self, query: str, time_ref: Dict) -> Dict[str, Any]:
+        """Handle queries checking if a student or user is registered"""
+        match = re.search(r"(?:is|check|find|lookup|search|did i register)\s+(?:student|user|employee)?\s*([a-zA-Z0-9\s-]+)", query)
+        name_query = match.group(1).strip() if match else query.replace("is", "").replace("registered", "").strip()
+
+        if name_query:
+            matched_users = self.db.query(User).filter(
+                or_(
+                    User.name.ilike(f"%{name_query}%"),
+                    User.email.ilike(f"%{name_query}%"),
+                    User.employee_or_student_id.ilike(f"%{name_query}%")
+                )
+            ).all()
+
+            if matched_users:
+                u = matched_users[0]
+                return {
+                    "type": "registration_check",
+                    "found": True,
+                    "user": {
+                        "name": u.name,
+                        "id": u.employee_or_student_id,
+                        "email": u.email,
+                        "department": u.department_name,
+                        "status": u.status
+                    },
+                    "summary": f"Yes, Student/User '{u.name}' (ID: {u.employee_or_student_id}) is REGISTERED in the system database as '{u.status}' in {u.department_name}."
+                }
+
+        return {
+            "type": "registration_check",
+            "found": False,
+            "summary": f"No student or user matching '{name_query}' is registered in the system database."
+        }
+
+    def _handle_leave_requests(self, query: str, time_ref: Dict) -> Dict[str, Any]:
+        """Handle queries about leave requests"""
+        from app.models.models import LeaveModel
+        leaves = self.db.query(LeaveModel).all()
+        if not leaves:
+            return {
+                "type": "leave_requests",
+                "count": 0,
+                "summary": "There are currently no leave requests recorded in the system database."
+            }
+
+        return {
+            "type": "leave_requests",
+            "count": len(leaves),
+            "summary": f"Found {len(leaves)} total leave request(s) in system.",
+            "requests": [
+                {
+                    "applicant": l.user_name,
+                    "type": l.leave_type,
+                    "dates": f"{l.start_date} to {l.end_date}",
+                    "status": l.status
+                }
+                for l in leaves
+            ]
+        }
+
     def process_query(self, query: str) -> Dict[str, Any]:
         """Process natural language query and return results"""
         query_lower = query.lower().strip()
