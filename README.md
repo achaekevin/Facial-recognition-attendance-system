@@ -63,6 +63,35 @@ Beyond just tracking attendance, it handles visitor registration, leave requests
 - Downloadable reports in multiple formats
 - Audit logs for tracking system activity
 
+## Advanced Enterprise Features
+
+**AI Assistant**
+The system includes a natural language assistant that lets you query attendance data conversationally. Instead of navigating through dashboards, just ask questions like "who was late today?" or "show me absences this week" and get instant answers. It understands context and can answer questions about late arrivals, absences, camera accuracy, department statistics, recognition failures, and attendance trends.
+
+**QR Code Backup Attendance**
+Sometimes facial recognition isn't practical, like when someone's face is covered or cameras are temporarily offline. The QR backup system generates time-limited QR codes (valid for 5 minutes) that employees can scan to log attendance manually. Every QR-based attendance entry is flagged as a fallback and includes the reason, so you maintain visibility into when and why the backup method was used.
+
+**Multi-Factor Attendance Verification**
+For high-security environments, single-factor attendance might not be enough. The multi-factor system lets you combine multiple verification methods: facial recognition, geofence validation (is the person actually at the office?), device fingerprinting, QR codes, and PIN codes. You can configure policies per department or employee category, like requiring both face and location for remote workers.
+
+**Security Center**
+A centralized monitoring dashboard that tracks all security-relevant events in real-time. It logs authentication attempts, permission denials, unusual patterns, failed recognition attempts, and API access. Events are categorized by severity (critical, high, medium, low), and you can review active sessions, recent alerts, and access patterns. Everything is timestamped and includes context like IP addresses and user agents.
+
+**AI-Powered Reports**
+Reports go beyond raw data and numbers. The AI report generator creates narrative summaries that explain what the data means. Generate monthly overviews, weekly summaries, department-specific reports, or employee performance analyses. Each report includes contextual insights, trend analysis, and highlights patterns that might need attention, like consistently late employees or departments with declining attendance rates.
+
+**System Health Dashboard**
+Monitor the infrastructure in real-time. Track CPU usage, memory consumption, disk space, and network latency across all components. View the status of each service (database, cache, recognition engine, cameras) and get alerts when something goes wrong. The dashboard shows component uptime, recent failures, and performance metrics, helping you catch issues before they affect users.
+
+**Comprehensive Audit Trail**
+Every action in the system is logged with full context. Track who did what, when they did it, and from where (IP address and user agent). Filter logs by user, action type, date range, or IP address. Export audit logs for compliance reviews or security investigations. The system also provides statistics on the most active users and most frequent actions.
+
+**API Integration Framework**
+Connect the attendance system with your existing enterprise tools. The integration framework supports HR systems, payroll platforms, email services, SMS gateways, and custom webhooks. Each integration can be tested independently, synced on-demand, and monitored for errors. This means attendance data can automatically flow into payroll systems, or trigger email notifications when someone's absent.
+
+**Progressive Web App (PWA)**
+The frontend works as a progressive web app, which means it can be installed on desktop or mobile devices and works offline. When the network is unavailable, the app caches essential data and queues actions for later. It also supports push notifications for real-time alerts and background sync to ensure no data is lost during connectivity issues.
+
 ## How It Works
 
 The system has three main parts:
