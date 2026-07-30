@@ -18,7 +18,8 @@ import {
   ChevronRight,
   Sparkles,
   Lock,
-  User as UserIcon
+  User as UserIcon,
+  Brain
 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { UserRole } from '../types';
@@ -115,6 +116,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
       title: 'Intelligence & Admin',
       items: [
         { 
+          label: 'AI Insights', 
+          path: '/ai-insights', 
+          icon: <Brain className="w-5 h-5" />,
+          badge: 'AI',
+          allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher'] 
+        },
+        { 
           label: 'Analytics', 
           path: '/analytics', 
           icon: <BarChart3 className="w-5 h-5" />,
@@ -206,7 +214,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
                         {!collapsed && <span className="truncate">{item.label}</span>}
                         {!collapsed && item.badge && (
                           <Badge
-                            variant={item.badge === 'LIVE' ? 'success' : 'danger'}
+                            variant={
+                              item.badge === 'LIVE' ? 'success' : 
+                              item.badge === 'AI' ? 'primary' : 
+                              'error'
+                            }
                             pulse={item.badge === 'LIVE'}
                             className="ml-auto text-[10px] px-1.5 py-0"
                           >

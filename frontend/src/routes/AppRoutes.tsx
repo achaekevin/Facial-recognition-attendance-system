@@ -22,6 +22,7 @@ import { ReportsPage } from '../features/reports/ReportsPage';
 import { AuditLogsPage } from '../features/audit-logs/AuditLogsPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
+import { AIInsightsPage } from '../features/ai-insights/AIInsightsPage';
 import { useAuthStore } from '../store/useAuthStore';
 import { UserRole } from '../types';
 
@@ -145,6 +146,15 @@ export const AppRoutes: React.FC = () => {
           element={
             <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'lecturer_teacher', 'security_officer']}>
               <AnalyticsPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="ai-insights"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'lecturer_teacher']}>
+              <AIInsightsPage />
             </RoleGuard>
           }
         />

@@ -25,61 +25,120 @@ export const LiveRecognitionCanvas: React.FC<LiveRecognitionCanvasProps> = ({
   const [hasCameraAccess, setHasCameraAccess] = useState(true);
   const [detectedUser, setDetectedUser] = useState<any | null>(null);
   const [isMatchActive, setIsMatchActive] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState<'scanning' | 'liveness' | 'recognizing' | 'validating' | 'success' | 'failed'>('scanning');
+  const [verificationMessage, setVerificationMessage] = useState<string>('Scanning for faces...');
+
+  // Smart Attendance Verification Workflow
+  const performSmartVerification = async (user: any) => {
+    try {
+      // Step 1: Liveness Check
+      setVerificationStatus('liveness');
+      setVerificationMessage('Verifying liveness...');
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      const livenessScore = 0.92 + Math.random() * 0.07; // Mock liveness score
+      if (livenessScore < 0.85) {
+        setVerificationStatus('failed');
+        setVerificationMessage('❌ Liveness check failed - possible spoof detected');
+        return false;
+      }
+
+      // Step 2: Recognition
+      setVerificationStatus('recognizing');
+      setVerificationMessage('Matching face embeddings...');
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      const confidenceScore = 95 + Math.random() * 4.5;
+      if (confidenceScore < 70) {
+        setVerificationStatus('failed');
+        setVerificationMessage('❌ Low confidence match - check lighting');
+        return false;
+      }
+
+      // Step 3: Attendance Rules Validation
+      setVerificationStatus('validating');
+      setVerificationMessage('Validating attendance rules...');
+      await new Promise(resolve => setTimeout(resolve, 700));
+      
+      // Mock rules validation (duplicate check, working hours, etc.)
+      const rulesValid = Math.random() > 0.1; // 90% pass rate
+      if (!rulesValid) {
+        setVerificationStatus('failed');
+        setVerificationMessage('❌ Duplicate attendance or outside working hours');
+        return false;
+      }
+
+      // Step 4: Success - Record Attendance
+      setVerificationStatus('success');
+      setVerificationMessage('✅ Attendance verified & recorded');
+      
+      const clockTime = new Date().toLocaleTimeString();
+      addAttendance({
+        userId: user.id,
+        userName: user.name,
+        userCategory: user.category,
+        userAvatar: user.avatar,
+        department: user.departmentName,
+        date: new Date().toISOString().split('T')[0],
+        clockIn: clockTime,
+        status: 'present',
+        confidenceScore: Number(confidenceScore.toFixed(1)),
+        cameraName: camera.name,
+        cameraId: camera.id,
+        location: camera.location,
+        workingHours: 8.0,
+        breakTime: 0.5,
+        approvalStatus: 'approved',
+        recognitionImageUrl: user.avatar || '',
+        deviceUsed: 'Biometric Camera',
+      });
+
+      if (onDetectFace) {
+        onDetectFace({
+          userId: user.id,
+          userName: user.name,
+          userCategory: user.category,
+          userAvatar: user.avatar,
+          department: user.departmentName,
+          status: 'present',
+          confidenceScore: Number(confidenceScore.toFixed(1)),
+          cameraName: camera.name,
+          location: camera.location,
+        });
+      }
+
+      // Reset after 2 seconds
+      setTimeout(() => {
+        setVerificationStatus('scanning');
+        setVerificationMessage('Scanning for faces...');
+        setIsMatchActive(false);
+        setDetectedUser(null);
+      }, 2000);
+
+      return true;
+    } catch (error) {
+      setVerificationStatus('failed');
+      setVerificationMessage('❌ Verification error');
+      return false;
+    }
+  };
 
   // Live FPS and dynamic matching against real enrolled users
   useEffect(() => {
     const interval = setInterval(() => {
       setFps(Math.floor((camera.fps || 30) - 2 + Math.random() * 4));
 
-      // If users are enrolled, perform real-time recognition matching
-      if (users.length > 0) {
-        const primaryUser = users[0];
+      // If users are enrolled and no active verification, start new verification
+      if (users.length > 0 && !isMatchActive && verificationStatus === 'scanning') {
+        const primaryUser = users[Math.floor(Math.random() * users.length)]; // Random user for demo
         setDetectedUser(primaryUser);
         setIsMatchActive(true);
-
-        const clockTime = new Date().toLocaleTimeString();
-
-        addAttendance({
-          userId: primaryUser.id,
-          userName: primaryUser.name,
-          userCategory: primaryUser.category,
-          userAvatar: primaryUser.avatar,
-          department: primaryUser.departmentName,
-          date: new Date().toISOString().split('T')[0],
-          clockIn: clockTime,
-          status: 'present',
-          confidenceScore: 99.4,
-          cameraName: camera.name,
-          cameraId: camera.id,
-          location: camera.location,
-          workingHours: 8.0,
-          breakTime: 0.5,
-          approvalStatus: 'approved',
-          recognitionImageUrl: primaryUser.avatar || '',
-          deviceUsed: 'Biometric Camera',
-        });
-
-        if (onDetectFace) {
-          onDetectFace({
-            userId: primaryUser.id,
-            userName: primaryUser.name,
-            userCategory: primaryUser.category,
-            userAvatar: primaryUser.avatar,
-            department: primaryUser.departmentName,
-            status: 'present',
-            confidenceScore: 99.4,
-            cameraName: camera.name,
-            location: camera.location,
-          });
-        }
-      } else {
-        setDetectedUser(null);
-        setIsMatchActive(false);
+        performSmartVerification(primaryUser);
       }
-    }, 4000);
+    }, 6000); // Check every 6 seconds
 
     return () => clearInterval(interval);
-  }, [camera, users, addAttendance, onDetectFace]);
+  }, [camera, users, addAttendance, onDetectFace, isMatchActive, verificationStatus]);
 
   const toggleFullscreen = () => {
     if (!containerRef.current) return;
@@ -114,15 +173,25 @@ export const LiveRecognitionCanvas: React.FC<LiveRecognitionCanvasProps> = ({
         </div>
       )}
 
-      {/* Real Enrolled User Dynamic Bounding Box Overlay */}
+      {/* Real Enrolled User Dynamic Bounding Box Overlay with Verification Flow */}
       {isMatchActive && detectedUser ? (
         <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-          <div className="relative w-48 h-64 border-2 border-emerald-400 bg-emerald-500/10 rounded-2xl shadow-2xl transition-all duration-300 animate-pulse-subtle">
+          <div className={`relative w-48 h-64 border-2 rounded-2xl shadow-2xl transition-all duration-300 ${
+            verificationStatus === 'success' ? 'border-emerald-400 bg-emerald-500/10' :
+            verificationStatus === 'failed' ? 'border-red-400 bg-red-500/10' :
+            'border-blue-400 bg-blue-500/10 animate-pulse'
+          }`}>
             {/* Top Match Label */}
-            <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg whitespace-nowrap">
+            <div className={`absolute -top-8 left-1/2 -translate-x-1/2 px-3 py-1 rounded-lg text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg whitespace-nowrap ${
+              verificationStatus === 'success' ? 'bg-emerald-600' :
+              verificationStatus === 'failed' ? 'bg-red-600' :
+              'bg-blue-600'
+            }`}>
               <UserCheck className="w-4 h-4 text-white" />
               <span>{detectedUser.name}</span>
-              <span className="font-mono text-[11px] bg-emerald-700 px-1.5 py-0.5 rounded">99.4%</span>
+              {verificationStatus === 'success' && (
+                <span className="font-mono text-[11px] bg-emerald-700 px-1.5 py-0.5 rounded">98.7%</span>
+              )}
             </div>
 
             {/* Corner Bracket Reticles */}
@@ -131,9 +200,34 @@ export const LiveRecognitionCanvas: React.FC<LiveRecognitionCanvasProps> = ({
             <div className="absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 border-white" />
             <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-white" />
 
-            {/* Bottom Status Badge */}
-            <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 bg-slate-950/90 text-emerald-400 text-[10px] font-mono uppercase px-2.5 py-0.5 rounded-full border border-emerald-500/40">
-              Clock-In Verified
+            {/* Verification Status Pipeline */}
+            <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 w-max">
+              <div className={`bg-slate-950/95 backdrop-blur-md text-xs px-3 py-1.5 rounded-full border ${
+                verificationStatus === 'success' ? 'border-emerald-500/40 text-emerald-400' :
+                verificationStatus === 'failed' ? 'border-red-500/40 text-red-400' :
+                'border-blue-500/40 text-blue-400'
+              }`}>
+                {verificationMessage}
+              </div>
+              
+              {/* Progress Indicators */}
+              <div className="flex items-center justify-center gap-1 mt-2">
+                <div className={`w-2 h-2 rounded-full ${
+                  ['liveness', 'recognizing', 'validating', 'success'].includes(verificationStatus) 
+                    ? 'bg-emerald-500' : 'bg-slate-600'
+                }`} />
+                <div className={`w-2 h-2 rounded-full ${
+                  ['recognizing', 'validating', 'success'].includes(verificationStatus) 
+                    ? 'bg-emerald-500' : 'bg-slate-600'
+                }`} />
+                <div className={`w-2 h-2 rounded-full ${
+                  ['validating', 'success'].includes(verificationStatus) 
+                    ? 'bg-emerald-500' : 'bg-slate-600'
+                }`} />
+                <div className={`w-2 h-2 rounded-full ${
+                  verificationStatus === 'success' ? 'bg-emerald-500' : 'bg-slate-600'
+                }`} />
+              </div>
             </div>
           </div>
         </div>

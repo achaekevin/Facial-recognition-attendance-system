@@ -26,6 +26,9 @@ from app.api.v1.notifications import router as notifications_router
 from app.api.v1.audit_logs import router as audit_logs_router
 from app.api.v1.settings import router as settings_router
 from app.api.v1.websocket import router as websocket_router
+from app.api.v1.ai_insights import router as ai_insights_router
+from app.api.v1.liveness import router as liveness_router
+from app.api.v1.smart_verification import router as smart_verification_router
 from scripts.seed import seed_data
 
 limiter = Limiter(key_func=get_remote_address)
@@ -81,6 +84,9 @@ app.include_router(notifications_router, prefix=settings.API_V1_STR)
 app.include_router(audit_logs_router, prefix=settings.API_V1_STR)
 app.include_router(settings_router, prefix=settings.API_V1_STR)
 app.include_router(websocket_router, prefix=settings.API_V1_STR)
+app.include_router(ai_insights_router, prefix=settings.API_V1_STR)
+app.include_router(liveness_router, prefix=settings.API_V1_STR)
+app.include_router(smart_verification_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def root():

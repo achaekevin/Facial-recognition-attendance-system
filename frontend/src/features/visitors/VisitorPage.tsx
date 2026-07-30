@@ -13,11 +13,21 @@ import { toast } from 'sonner';
 export const VisitorPage: React.FC = () => {
   const { visitors, addVisitor, checkoutVisitor, users } = useBiometricStore();
   const [isRegModalOpen, setIsRegModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [fullName, setFullName] = useState('');
   const [company, setCompany] = useState('');
-  const [hostUserId, setHostUserId] = useState(users[0]?.id || '');
+  const [hostInput, setHostInput] = useState('');
+  const [hostUserId, setHostUserId] = useState('');
   const [purpose, setPurpose] = useState('');
+  const [showHostSuggestions, setShowHostSuggestions] = useState(false);
+
+  // Filter users based on input
+  const filteredUsers = users.filter(u => 
+    u.name.toLowerCase().includes(hostInput.toLowerCase()) ||
+    u.departmentName?.toLowerCase().includes(hostInput.toLowerCase()) ||
+    u.email?.toLowerCase().includes(hostInput.toLowerCase())
+  );
 
   const columns: ColumnDef<VisitorRecord>[] = [
     {
@@ -87,25 +97,81 @@ export const VisitorPage: React.FC = () => {
     },
   ];
 
-  const handleRegisterVisitor = (e: React.FormEvent) => {
+  const handleRegisterVisitor = async (e: React.FormEvent) => {
     e.preventDefault();
-    const host = users.find((u) => u.id === hostUserId) || users[0];
+    
+    // Validation
+    if (!fullName.trim()) {
+      toast.error('Please enter visitor full name');
+      return;
+    }
 
-    addVisitor({
-      fullName,
-      email: `${fullName.toLowerCase().replace(' ', '.')}@guest.org`,
-      phone: '+1 (555) 998-1122',
-      company: company || 'Independent Guest',
-      hostUserId: host.id,
-      hostName: host.name,
-      purpose: purpose || 'Official Meeting',
-      expectedArrival: '2026-07-28 14:00',
-      expectedDeparture: '2026-07-28 17:00',
-      faceImageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
-      status: 'checked_in',
-    });
+    if (!hostUserId) {
+      toast.error('Please select a host official');
+      return;
+    }
 
-    toast.success(`Visitor badge issued for ${fullName}!`);
+    setIsSubmitting(true);
+
+    try {
+      const host = users.find((u) => u.id === hostUserId);
+      
+      if (!host) {
+        throw new Error('Selected host not found');
+      }
+
+      addVisitor({
+        fullName: fullName.trim(),
+        email: `${fullName.toLowerCase().replace(/\s+/g, '.')}@guest.org`,
+        phone: '+1 (555) 998-1122',
+        company: company.trim() || 'Independent Guest',
+        hostUserId: host.id,
+        hostName: host.name,
+        purpose: purpose.trim() || 'Official Meeting',
+        expectedArrival: new Date().toISOString(),
+        expectedDeparture: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(), // 3 hours from now
+        faceImageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+        status: 'checked_in',
+      });
+
+      // Success notification with confetti effect
+      toast.success(`✅ Visitor badge issued successfully!`, {
+        description: `${fullName} has been registered and checked in. Host: ${host.name}`,
+        duration: 5000,
+      });
+
+      // Reset form
+      setFullName('');
+      setCompany('');
+      setHostInput('');
+      setHostUserId('');
+      setPurpose('');
+      setIsRegModalOpen(false);
+      
+    } catch (error) {
+      console.error('Error registering visitor:', error);
+      toast.error('Failed to register visitor', {
+        description: error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.',
+        duration: 5000,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const selectHost = (userId: string, userName: string) => {
+    setHostUserId(userId);
+    setHostInput(userName);
+    setShowHostSuggestions(false);
+  };
+
+  const resetForm = () => {
+    setFullName('');
+    setCompany('');
+    setHostInput('');
+    setHostUserId('');
+    setPurpose('');
+    setShowHostSuggestions(false);
     setIsRegModalOpen(false);
   };
 
@@ -135,14 +201,14 @@ export const VisitorPage: React.FC = () => {
 
       <Modal
         isOpen={isRegModalOpen}
-        onClose={() => setIsRegModalOpen(false)}
+        onClose={resetForm}
         title="Visitor Registration & Fast Pass"
         description="Capture face image and assign institutional host."
       >
         <form onSubmit={handleRegisterVisitor} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
-              Visitor Full Name
+              Visitor Full Name *
             </label>
             <input
               type="text"
@@ -150,7 +216,8 @@ export const VisitorPage: React.FC = () => {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="e.g. Sophia Martinez"
-              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
+              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
+              disabled={isSubmitting}
             />
           </div>
 
@@ -163,25 +230,77 @@ export const VisitorPage: React.FC = () => {
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               placeholder="e.g. BioTech Solutions"
-              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
+              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
+              disabled={isSubmitting}
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
-              Host Official
+              Host Official *
             </label>
-            <select
-              value={hostUserId}
-              onChange={(e) => setHostUserId(e.target.value)}
-              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
-            >
-              {users.map((u) => (
-                <option key={u.id} value={u.id}>
-                  {u.name} ({u.departmentName})
-                </option>
-              ))}
-            </select>
+            <input
+              type="text"
+              required
+              value={hostInput}
+              onChange={(e) => {
+                setHostInput(e.target.value);
+                setShowHostSuggestions(true);
+                setHostUserId(''); // Clear selection when typing
+              }}
+              onFocus={() => setShowHostSuggestions(true)}
+              placeholder="Type to search for host by name, department, or email..."
+              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
+              disabled={isSubmitting}
+              autoComplete="off"
+            />
+            
+            {/* Dropdown suggestions */}
+            {showHostSuggestions && hostInput && filteredUsers.length > 0 && (
+              <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                {filteredUsers.slice(0, 10).map((user) => (
+                  <button
+                    key={user.id}
+                    type="button"
+                    onClick={() => selectHost(user.id, user.name)}
+                    className="w-full px-3.5 py-2.5 text-left hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border-b border-slate-100 dark:border-slate-800 last:border-0"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-xs">
+                        {user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+                          {user.name}
+                        </p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                          {user.departmentName} • {user.role}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* No results message */}
+            {showHostSuggestions && hostInput && filteredUsers.length === 0 && (
+              <div className="absolute z-50 w-full mt-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg p-3">
+                <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
+                  No hosts found matching "{hostInput}"
+                </p>
+              </div>
+            )}
+
+            {/* Selected host indicator */}
+            {hostUserId && (
+              <div className="mt-2 flex items-center gap-2 text-xs text-green-600 dark:text-green-400">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Host selected: {users.find(u => u.id === hostUserId)?.name}</span>
+              </div>
+            )}
           </div>
 
           <div>
@@ -192,17 +311,28 @@ export const VisitorPage: React.FC = () => {
               type="text"
               value={purpose}
               onChange={(e) => setPurpose(e.target.value)}
-              placeholder="Guest Lecture & Lab Tour"
-              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
+              placeholder="e.g. Guest Lecture & Lab Tour"
+              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors"
+              disabled={isSubmitting}
             />
           </div>
 
           <div className="flex justify-end gap-3 pt-2">
-            <Button variant="outline" onClick={() => setIsRegModalOpen(false)}>
+            <Button 
+              type="button"
+              variant="outline" 
+              onClick={resetForm}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
-            <Button type="submit" variant="primary">
-              Issue Visitor Badge
+            <Button 
+              type="submit" 
+              variant="primary"
+              disabled={isSubmitting || !hostUserId}
+              leftIcon={isSubmitting ? <Sparkles className="w-4 h-4 animate-spin" /> : <QrCode className="w-4 h-4" />}
+            >
+              {isSubmitting ? 'Issuing Badge...' : 'Issue Visitor Badge'}
             </Button>
           </div>
         </form>
