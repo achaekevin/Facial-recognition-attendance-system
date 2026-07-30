@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bioauth_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql+aiomysql://root:rootpassword@mysql:3306/bioauth_db
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=supersecretkey99481928301
+    depends_on:
+      - mysql
+      - redis
+    restart: always
+
+  mysql:
+    image: mysql:8.0
+    container_name: bioauth_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: bioauth_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    container_name: bioauth_redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+volumes:
+  mysql_data:

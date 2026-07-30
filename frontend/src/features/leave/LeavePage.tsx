@@ -1,0 +1,216 @@
+import React, { useState } from 'react';
+import { ColumnDef } from '@tanstack/react-table';
+import { LeaveRequest, LeaveType } from '../../types';
+import { DataTable } from '../../components/data-display/DataTable';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Badge } from '../../components/ui/Badge';
+import { Modal } from '../../components/ui/Modal';
+import { useBiometricStore } from '../../store/useBiometricStore';
+import { FileText, Plus, CheckCircle2, XCircle, Calendar, Clock } from 'lucide-react';
+import { toast } from 'sonner';
+
+export const LeavePage: React.FC = () => {
+  const { leaves, addLeave, updateLeaveStatus, users } = useBiometricStore();
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+
+  const [leaveType, setLeaveType] = useState<LeaveType>('annual');
+  const [startDate, setStartDate] = useState('2026-08-01');
+  const [endDate, setEndDate] = useState('2026-08-03');
+  const [reason, setReason] = useState('');
+
+  const columns: ColumnDef<LeaveRequest>[] = [
+    {
+      accessorKey: 'userName',
+      header: 'Applicant Roster',
+      cell: ({ row }) => (
+        <div className="flex items-center gap-3">
+          <img src={row.original.userAvatar} alt={row.original.userName} className="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
+          <div>
+            <p className="font-semibold text-slate-900 dark:text-white">{row.original.userName}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{row.original.department}</p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'leaveType',
+      header: 'Category',
+      cell: ({ row }) => (
+        <Badge variant="primary" className="capitalize">
+          {row.original.leaveType}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: 'totalDays',
+      header: 'Duration',
+      cell: ({ row }) => (
+        <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
+          {row.original.startDate} to {row.original.endDate} ({row.original.totalDays} Days)
+        </span>
+      ),
+    },
+    {
+      accessorKey: 'status',
+      header: 'Approval Status',
+      cell: ({ row }) => {
+        const st = row.original.status;
+        return (
+          <Badge variant={st === 'approved' ? 'success' : st === 'rejected' ? 'danger' : 'warning'}>
+            {st.toUpperCase()}
+          </Badge>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        const l = row.original;
+        if (l.status !== 'pending') return <span className="text-xs text-slate-400">Decided</span>;
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                updateLeaveStatus(l.id, 'approved', 'Super Admin');
+                toast.success(`Approved leave for ${l.userName}`);
+              }}
+              className="text-emerald-600 hover:text-emerald-700"
+            >
+              Approve
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                updateLeaveStatus(l.id, 'rejected', 'Super Admin');
+                toast.error(`Rejected leave for ${l.userName}`);
+              }}
+              className="text-rose-600 hover:text-rose-700"
+            >
+              Reject
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const handleApplyLeave = (e: React.FormEvent) => {
+    e.preventDefault();
+    addLeave({
+      userId: users[0].id,
+      userName: users[0].name,
+      userAvatar: users[0].avatar,
+      department: users[0].departmentName,
+      leaveType,
+      startDate,
+      endDate,
+      totalDays: 3,
+      reason,
+    });
+    toast.success('Leave application submitted for approval!');
+    setIsApplyModalOpen(false);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+            <FileText className="w-6 h-6 text-primary" /> Leave Application & Approvals
+          </h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Request medical, annual, or emergency leave and review team approvals.
+          </p>
+        </div>
+
+        <Button variant="primary" onClick={() => setIsApplyModalOpen(true)} leftIcon={<Plus className="w-4 h-4" />}>
+          Apply for Leave
+        </Button>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={leaves}
+        searchPlaceholder="Search leave requests..."
+        exportFilename="leave_applications"
+      />
+
+      <Modal
+        isOpen={isApplyModalOpen}
+        onClose={() => setIsApplyModalOpen(false)}
+        title="Submit Leave Application"
+        description="Select dates and type for administrative approval."
+      >
+        <form onSubmit={handleApplyLeave} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+              Leave Category
+            </label>
+            <select
+              value={leaveType}
+              onChange={(e) => setLeaveType(e.target.value as any)}
+              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
+            >
+              <option value="annual">Annual Paid Leave</option>
+              <option value="medical">Medical / Sick Leave</option>
+              <option value="emergency">Emergency Family Leave</option>
+              <option value="unpaid">Unpaid Personal Leave</option>
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+                Start Date
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+                End Date
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+              Reason Justification
+            </label>
+            <textarea
+              rows={3}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="State reason for absence..."
+              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <Button variant="outline" onClick={() => setIsApplyModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary">
+              Submit Application
+            </Button>
+          </div>
+        </form>
+      </Modal>
+    </div>
+  );
+};
