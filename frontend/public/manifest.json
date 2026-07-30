@@ -4,15 +4,9 @@
   "description": "Enterprise Attendance Management with AI-powered Facial Recognition",
   "icons": [
     {
-      "src": "/logo192.png",
-      "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/logo512.png",
-      "type": "image/png",
-      "sizes": "512x512",
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
       "purpose": "any maskable"
     }
   ],
@@ -36,14 +30,14 @@
       "short_name": "Recognition",
       "description": "Start live facial recognition",
       "url": "/live-recognition",
-      "icons": [{ "src": "/logo192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
     },
     {
       "name": "Attendance",
       "short_name": "Attendance",
       "description": "View attendance records",
       "url": "/attendance",
-      "icons": [{ "src": "/logo192.png", "sizes": "192x192" }]
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
     }
   ],
   "prefer_related_applications": false

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Search, 
   Bell, 
@@ -39,6 +39,28 @@ export const Header: React.FC<HeaderProps> = ({
   const [roleMenuOpen, setRoleMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
+  const roleMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown menus automatically when clicking outside or clicking anywhere in the dashboard
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (roleMenuRef.current && !roleMenuRef.current.contains(event.target as Node)) {
+        setRoleMenuOpen(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
+
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const roles: Array<{ id: UserRole; label: string; desc: string }> = [
@@ -78,9 +100,12 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Right Controls */}
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Active Role Switcher Dropdown */}
-        <div className="relative">
+        <div className="relative" ref={roleMenuRef}>
           <button
-            onClick={() => setRoleMenuOpen(!roleMenuOpen)}
+            onClick={() => {
+              setRoleMenuOpen((prev) => !prev);
+              setUserMenuOpen(false);
+            }}
             className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary transition-colors text-xs font-semibold"
           >
             <ShieldCheck className="w-4 h-4" />
@@ -148,9 +173,12 @@ export const Header: React.FC<HeaderProps> = ({
         <OfflineModeIndicator />
 
         {/* User Profile Menu */}
-        <div className="relative">
+        <div className="relative" ref={userMenuRef}>
           <button
-            onClick={() => setUserMenuOpen(!userMenuOpen)}
+            onClick={() => {
+              setUserMenuOpen((prev) => !prev);
+              setRoleMenuOpen(false);
+            }}
             className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-primary/40 transition-all"
           >
             {user?.avatar ? (
@@ -167,7 +195,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {userMenuOpen && (
-            <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-card border border-slate-200 dark:border-slate-800 shadow-2xl p-2 z-50">
+            <div className="absolute right-0 mt-2 w-56 rounded-2xl bg-card border border-slate-200 dark:border-slate-800 shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2">
               <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800">
                 <p className="text-xs font-bold text-slate-900 dark:text-white">{user?.name}</p>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{user?.email}</p>
@@ -178,7 +206,7 @@ export const Header: React.FC<HeaderProps> = ({
                     navigate('/profile');
                     setUserMenuOpen(false);
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
                 >
                   <UserIcon className="w-4 h-4" /> My Biometric Profile
                 </button>
@@ -187,16 +215,17 @@ export const Header: React.FC<HeaderProps> = ({
                     lockScreen();
                     setUserMenuOpen(false);
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
                 >
                   <Lock className="w-4 h-4" /> Lock Screen
                 </button>
                 <button
                   onClick={() => {
                     logout();
+                    setUserMenuOpen(false);
                     navigate('/login');
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors"
                 >
                   <LogOut className="w-4 h-4" /> Log Out
                 </button>

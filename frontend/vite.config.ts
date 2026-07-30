@@ -14,4 +14,7 @@ export default defineConfig({
     port: 3000,
     open: false,
   },
+  optimizeDeps: {
+    include: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled', 'chart.js', 'react-chartjs-2'],
+  },
 });

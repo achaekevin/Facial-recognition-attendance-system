@@ -6,25 +6,45 @@
     <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#1976d2" />
-    <meta name="description" content="BioAuth Pro - Enterprise Facial Recognition Attendance System with AI" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>BioAuth Pro - Facial Recognition Attendance</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Register Service Worker for PWA
+      // Service Worker registration logic
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker
-            .register('/service-worker.js')
-            .then((registration) => {
-              console.log('Service Worker registered:', registration);
-            })
-            .catch((error) => {
-              console.error('Service Worker registration failed:', error);
+        const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (isDev) {
+          // In development mode, unregister any existing service worker & clear caches to prevent Vite module interception
+          navigator.serviceWorker.getRegistrations().then((registrations) => {
+            for (const registration of registrations) {
+              registration.unregister();
+              console.log('Unregistered active dev Service Worker');
+            }
+          });
+          if ('caches' in window) {
+            caches.keys().then((names) => {
+              for (const name of names) {
+                caches.delete(name);
+              }
             });
-        });
+          }
+        } else {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker
+              .register('/service-worker.js')
+              .then((registration) => {
+                console.log('Service Worker registered:', registration);
+              })
+              .catch((error) => {
+                console.error('Service Worker registration failed:', error);
+              });
+          });
+        }
       }
     </script>
   </body>

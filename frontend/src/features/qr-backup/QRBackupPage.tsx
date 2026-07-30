@@ -1,179 +1,165 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  TextField,
-  Grid,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Chip,
-  Alert,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from '@mui/material';
-import { QrCode2, CheckCircle, History } from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
+import { Button } from '../../components/ui/Button';
+import { Badge } from '../../components/ui/Badge';
+import { Card } from '../../components/ui/Card';
+import { Modal } from '../../components/ui/Modal';
+import { QrCode, CheckCircle, Clock } from 'lucide-react';
+import { toast } from 'sonner';
 
 const QRBackupPage: React.FC = () => {
-  const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [qrCode, setQrCode] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
-  const [generateForm, setGenerateForm] = useState({
-    user_id: '',
-    reason: '',
-    camera_id: ''
-  });
+  const [showQRDialog, setShowQRDialog] = useState(false);
+  const [userId, setUserId] = useState('');
+  const [reason, setReason] = useState('');
+
+  useEffect(() => {
+    fetchHistory();
+  }, []);
+
+  const fetchHistory = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/qr-backup/history');
+      const data = await response.json();
+      setHistory(data.history || []);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   const handleGenerate = async () => {
     try {
       const response = await fetch('http://localhost:8000/api/v1/qr-backup/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(generateForm)
+        body: JSON.stringify({ user_id: userId, reason })
       });
       const data = await response.json();
       setQrCode(data);
-      setShowGenerateDialog(true);
+      setShowQRDialog(true);
+      toast.success('QR code generated (valid for 5 minutes)');
     } catch (error) {
-      console.error('Error generating QR:', error);
+      console.error('Error:', error);
+      toast.error('Failed to generate QR code');
     }
   };
-
-  const fetchHistory = async () => {
-    try {
-      const response = await fetch('http://localhost:8000/api/v1/qr-backup/history?days=7');
-      const data = await response.json();
-      setHistory(data.records || []);
-    } catch (error) {
-      console.error('Error fetching history:', error);
-    }
-  };
-
-  React.useEffect(() => {
-    fetchHistory();
-  }, []);
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>QR Code Backup Attendance</Typography>
-      <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-        Backup attendance method when facial recognition fails
-      </Typography>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+          <QrCode className="w-6 h-6 text-primary" /> QR Code Backup
+        </h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          Fallback attendance method when facial recognition isn't available
+        </p>
+      </div>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>Generate QR Code</Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <TextField
-                  label="User ID"
-                  value={generateForm.user_id}
-                  onChange={(e) => setGenerateForm({ ...generateForm, user_id: e.target.value })}
-                />
-                <FormControl fullWidth>
-                  <InputLabel>Reason for Fallback</InputLabel>
-                  <Select
-                    value={generateForm.reason}
-                    label="Reason for Fallback"
-                    onChange={(e) => setGenerateForm({ ...generateForm, reason: e.target.value })}
-                  >
-                    <MenuItem value="low_confidence">Low Recognition Confidence</MenuItem>
-                    <MenuItem value="camera_failure">Camera Failure</MenuItem>
-                    <MenuItem value="poor_lighting">Poor Lighting</MenuItem>
-                    <MenuItem value="face_covered">Face Covered</MenuItem>
-                    <MenuItem value="other">Other</MenuItem>
-                  </Select>
-                </FormControl>
-                <TextField
-                  label="Camera ID (Optional)"
-                  value={generateForm.camera_id}
-                  onChange={(e) => setGenerateForm({ ...generateForm, camera_id: e.target.value })}
-                />
-                <Button
-                  variant="contained"
-                  startIcon={<QrCode2 />}
-                  onClick={handleGenerate}
-                  disabled={!generateForm.user_id || !generateForm.reason}
-                >
-                  Generate QR Code
-                </Button>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+      <Card>
+        <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Generate QR Code</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+              User ID / Employee ID
+            </label>
+            <input
+              type="text"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              placeholder="emp-001"
+              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
+            />
+          </div>
 
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <History /> QR Backup History
-              </Typography>
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>User</TableCell>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Time</TableCell>
-                      <TableCell>Reason</TableCell>
-                      <TableCell>Camera</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {history.map((record) => (
-                      <TableRow key={record.id}>
-                        <TableCell>{record.user_name}</TableCell>
-                        <TableCell>{record.date}</TableCell>
-                        <TableCell>{record.clock_in}</TableCell>
-                        <TableCell>
-                          <Chip label={record.fallback_reason} size="small" color="warning" />
-                        </TableCell>
-                        <TableCell>{record.camera_id}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+              Reason for Backup
+            </label>
+            <select
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
+            >
+              <option value="">Select reason...</option>
+              <option value="camera_offline">Camera Offline</option>
+              <option value="face_covered">Face Covered (PPE/Mask)</option>
+              <option value="recognition_failed">Recognition Failed</option>
+              <option value="emergency">Emergency Override</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
 
-      <Dialog open={showGenerateDialog} onClose={() => setShowGenerateDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>QR Code Generated</DialogTitle>
-        <DialogContent>
-          {qrCode && (
-            <Box sx={{ textAlign: 'center' }}>
-              <Alert severity="success" sx={{ mb: 2 }}>
-                <CheckCircle /> QR Code valid for 5 minutes
-              </Alert>
-              <img src={qrCode.qr_image} alt="QR Code" style={{ width: '300px', height: '300px' }} />
-              <Typography variant="body2" sx={{ mt: 2 }}>
-                User: {qrCode.user_id}
-              </Typography>
-              <Typography variant="body2">
-                Expires: {new Date(qrCode.expires_at).toLocaleTimeString()}
-              </Typography>
-              <Typography variant="caption" color="textSecondary" sx={{ mt: 2, display: 'block' }}>
-                Scan this code to record attendance
-              </Typography>
-            </Box>
-          )}
-        </DialogContent>
-      </Dialog>
-    </Box>
+          <Button variant="primary" onClick={handleGenerate} disabled={!userId || !reason}>
+            Generate QR Code
+          </Button>
+        </div>
+      </Card>
+
+      <Card>
+        <h3 className="font-semibold text-slate-900 dark:text-white mb-4">QR Backup History</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="border-b border-slate-200 dark:border-slate-800">
+              <tr>
+                <th className="text-left py-3 px-4 font-semibold text-slate-700 dark:text-slate-300">User</th>
+                <th className="text-left py-3 px-4 font-semibold text-slate-700 dark:text-slate-300">Reason</th>
+                <th className="text-left py-3 px-4 font-semibold text-slate-700 dark:text-slate-300">Timestamp</th>
+                <th className="text-left py-3 px-4 font-semibold text-slate-700 dark:text-slate-300">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map((entry, idx) => (
+                <tr key={idx} className="border-b border-slate-100 dark:border-slate-800">
+                  <td className="py-3 px-4 text-slate-900 dark:text-white">{entry.user_name || entry.user_id}</td>
+                  <td className="py-3 px-4">
+                    <Badge variant="warning">{entry.reason}</Badge>
+                  </td>
+                  <td className="py-3 px-4 text-slate-600 dark:text-slate-400">
+                    {new Date(entry.timestamp).toLocaleString()}
+                  </td>
+                  <td className="py-3 px-4">
+                    <Badge variant={entry.used ? 'success' : 'info'}>
+                      {entry.used ? 'Used' : 'Generated'}
+                    </Badge>
+                  </td>
+                </tr>
+              ))}
+              {history.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="py-8 px-4 text-center text-slate-500 dark:text-slate-400">
+                    No QR backup history yet
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <Modal
+        isOpen={showQRDialog}
+        onClose={() => setShowQRDialog(false)}
+        title="QR Code Generated"
+        description="Valid for 5 minutes"
+      >
+        {qrCode && (
+          <div className="space-y-4">
+            <div className="flex justify-center p-6 bg-white rounded-lg">
+              <img src={qrCode.qr_image} alt="QR Code" className="w-64 h-64" />
+            </div>
+            <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg">
+              <Clock className="w-4 h-4" />
+              <span>This QR code expires at {new Date(qrCode.expires_at).toLocaleTimeString()}</span>
+            </div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">
+              <p><strong>Code ID:</strong> {qrCode.code_id}</p>
+              <p><strong>User:</strong> {qrCode.user_id}</p>
+              <p><strong>Reason:</strong> {qrCode.reason}</p>
+            </div>
+          </div>
+        )}
+      </Modal>
+    </div>
   );
 };
 

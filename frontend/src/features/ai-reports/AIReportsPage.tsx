@@ -1,144 +1,139 @@
 import React, { useState } from 'react';
-import {
-  Box, Card, CardContent, Typography, Button, Grid, Paper, Chip,
-  FormControl, InputLabel, Select, MenuItem, CircularProgress
-} from '@mui/material';
-import { Assessment, TrendingUp, TrendingDown, AutoAwesome } from '@mui/icons-material';
+import { Button } from '../../components/ui/Button';
+import { Badge } from '../../components/ui/Badge';
+import { Card } from '../../components/ui/Card';
+import { FileText, TrendingUp, TrendingDown, Sparkles, Download } from 'lucide-react';
+import { toast } from 'sonner';
 
 const AIReportsPage: React.FC = () => {
-  const [reportType, setReportType] = useState('monthly');
-  const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [report, setReport] = useState<any>(null);
+  const [reportType, setReportType] = useState('monthly');
+  const [targetId, setTargetId] = useState('');
 
-  const generateReport = async () => {
+  const reportTypes = [
+    { value: 'monthly', label: 'Monthly Overview', description: 'Complete monthly attendance analysis' },
+    { value: 'weekly', label: 'Weekly Summary', description: 'Last 7 days attendance recap' },
+    { value: 'department', label: 'Department Report', description: 'Department-specific analysis' },
+    { value: 'performance', label: 'Performance Analysis', description: 'Employee performance insights' }
+  ];
+
+  const handleGenerateReport = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8000/api/v1/ai-reports/generate?report_type=${reportType}`);
+      const response = await fetch(`http://localhost:8000/api/v1/ai-reports/generate/${reportType}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ target_id: targetId || null })
+      });
       const data = await response.json();
       setReport(data);
+      toast.success('Report generated successfully');
     } catch (error) {
       console.error('Error:', error);
+      toast.error('Failed to generate report');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <AutoAwesome color="primary" /> AI-Powered Reports
-      </Typography>
-      <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-        Natural language summaries with intelligent insights
-      </Typography>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+          <FileText className="w-6 h-6 text-primary" /> AI-Powered Reports
+        </h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          Generate narrative reports with contextual insights
+        </p>
+      </div>
 
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>Generate Report</Typography>
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel>Report Type</InputLabel>
-                <Select value={reportType} label="Report Type" onChange={(e) => setReportType(e.target.value)}>
-                  <MenuItem value="monthly">Monthly Summary</MenuItem>
-                  <MenuItem value="weekly">Weekly Summary</MenuItem>
-                  <MenuItem value="department">Department Comparison</MenuItem>
-                  <MenuItem value="performance">System Performance</MenuItem>
-                </Select>
-              </FormControl>
-              <Button
-                fullWidth
-                variant="contained"
-                startIcon={<Assessment />}
-                onClick={generateReport}
-                disabled={loading}
-              >
-                {loading ? 'Generating...' : 'Generate AI Report'}
-              </Button>
-            </CardContent>
-          </Card>
-        </Grid>
+      <Card>
+        <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Generate Report</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          {reportTypes.map((type) => (
+            <button
+              key={type.value}
+              onClick={() => setReportType(type.value)}
+              className={`text-left p-4 rounded-lg border-2 transition-colors ${
+                reportType === type.value
+                  ? 'border-primary bg-primary/5'
+                  : 'border-slate-200 dark:border-slate-800 hover:border-primary/50'
+              }`}
+            >
+              <h4 className="font-semibold text-slate-900 dark:text-white">{type.label}</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{type.description}</p>
+            </button>
+          ))}
+        </div>
 
-        <Grid item xs={12} md={8}>
-          {loading ? (
-            <Card><CardContent sx={{ textAlign: 'center', p: 4 }}>
-              <CircularProgress />
-              <Typography sx={{ mt: 2 }}>Analyzing data and generating insights...</Typography>
-            </CardContent></Card>
-          ) : report ? (
-            <Card>
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="h5">
-                    {report.report_type.replace('_', ' ').toUpperCase()} Report
-                  </Typography>
-                  <Chip label={`Generated ${new Date(report.generated_at).toLocaleString()}`} size="small" />
-                </Box>
+        {(reportType === 'department' || reportType === 'performance') && (
+          <div className="mb-4">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+              {reportType === 'department' ? 'Department ID' : 'Employee ID'} (Optional)
+            </label>
+            <input
+              type="text"
+              value={targetId}
+              onChange={(e) => setTargetId(e.target.value)}
+              placeholder={reportType === 'department' ? 'dept-001' : 'emp-001'}
+              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl"
+            />
+          </div>
+        )}
 
-                <Paper sx={{ p: 3, bgcolor: 'primary.light', color: 'white', mb: 3 }}>
-                  <Typography variant="h6" gutterBottom>AI Summary</Typography>
-                  <Typography variant="body1">{report.narrative}</Typography>
-                </Paper>
+        <Button
+          variant="primary"
+          onClick={handleGenerateReport}
+          disabled={loading}
+          leftIcon={<Sparkles className="w-4 h-4" />}
+        >
+          {loading ? 'Generating...' : 'Generate Report'}
+        </Button>
+      </Card>
 
-                {report.insights && (
-                  <Box sx={{ mb: 3 }}>
-                    <Typography variant="h6" gutterBottom>Key Insights</Typography>
-                    {report.insights.map((insight: string, idx: number) => (
-                      <Chip
-                        key={idx}
-                        label={insight}
-                        sx={{ mr: 1, mb: 1 }}
-                        icon={insight.includes('increased') ? <TrendingUp /> : <TrendingDown />}
-                        color={insight.includes('increased') ? 'success' : 'warning'}
-                      />
-                    ))}
-                  </Box>
-                )}
+      {report && (
+        <Card>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="font-semibold text-slate-900 dark:text-white">{report.title}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Generated {new Date(report.generated_at).toLocaleString()}</p>
+            </div>
+            <Button size="sm" variant="outline" leftIcon={<Download className="w-3.5 h-3.5" />}>
+              Export
+            </Button>
+          </div>
 
-                {report.metrics && (
-                  <Box>
-                    <Typography variant="h6" gutterBottom>Detailed Metrics</Typography>
-                    <Grid container spacing={2}>
-                      {Object.entries(report.metrics).map(([key, value]: [string, any]) => (
-                        <Grid item xs={6} md={4} key={key}>
-                          <Paper sx={{ p: 2 }}>
-                            <Typography variant="body2" color="textSecondary">
-                              {key.replace(/_/g, ' ').toUpperCase()}
-                            </Typography>
-                            <Typography variant="h6">
-                              {typeof value === 'number' ? value.toFixed(2) : value}
-                            </Typography>
-                          </Paper>
-                        </Grid>
-                      ))}
-                    </Grid>
-                  </Box>
-                )}
+          <div className="prose dark:prose-invert max-w-none">
+            <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">
+              {report.narrative}
+            </p>
+          </div>
 
-                {report.departments && (
-                  <Box sx={{ mt: 3 }}>
-                    <Typography variant="h6" gutterBottom>Department Performance</Typography>
-                    {report.departments.slice(0, 5).map((dept: any) => (
-                      <Paper key={dept.name} sx={{ p: 2, mb: 1 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography>{dept.name}</Typography>
-                          <Chip label={`${dept.rate.toFixed(1)} rate`} size="small" color="primary" />
-                        </Box>
-                      </Paper>
-                    ))}
-                  </Box>
-                )}
-              </CardContent>
-            </Card>
-          ) : (
-            <Card><CardContent sx={{ textAlign: 'center', p: 4, color: 'text.secondary' }}>
-              <Assessment sx={{ fontSize: 64, mb: 2 }} />
-              <Typography>Select a report type and click Generate to view AI-powered insights</Typography>
-            </CardContent></Card>
+          {report.insights && report.insights.length > 0 && (
+            <div className="mt-4 space-y-2">
+              <h4 className="text-sm font-semibold text-slate-900 dark:text-white">Key Insights</h4>
+              <div className="flex flex-wrap gap-2">
+                {report.insights.map((insight: string, idx: number) => (
+                  <Badge key={idx} variant="info">{insight}</Badge>
+                ))}
+              </div>
+            </div>
           )}
-        </Grid>
-      </Grid>
-    </Box>
+
+          {report.metrics && (
+            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+              {Object.entries(report.metrics).map(([key, value]: [string, any]) => (
+                <div key={key} className="p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 uppercase">{key.replace(/_/g, ' ')}</p>
+                  <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">{value}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      )}
+    </div>
   );
 };
 

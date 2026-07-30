@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Users, 
   UserCheck, 
@@ -33,10 +33,13 @@ import { StatsCard } from '../../components/data-display/StatsCard';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
+import { Modal } from '../../components/ui/Modal';
 import { useBiometricStore } from '../../store/useBiometricStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { LiveRecognitionCanvas } from '../../components/webcam/LiveRecognitionCanvas';
 import { useNavigate } from 'react-router-dom';
+import { LeaveType } from '../../types';
+import { toast } from 'sonner';
 
 const emptyTrendData = [
   { day: 'Mon', present: 0, late: 0, absent: 0 },
@@ -51,7 +54,54 @@ const emptyTrendData = [
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { activeRole, user } = useAuthStore();
-  const { users, attendance, cameras, unknownFaces, visitors } = useBiometricStore();
+  const { users, attendance, cameras, unknownFaces, visitors, addLeave } = useBiometricStore();
+
+  const [isApplyLeaveModalOpen, setIsApplyLeaveModalOpen] = useState(false);
+  const [leaveType, setLeaveType] = useState<LeaveType>('annual');
+  const [startDate, setStartDate] = useState('2026-08-01');
+  const [endDate, setEndDate] = useState('2026-08-03');
+  const [reason, setReason] = useState('');
+
+  const handleApplyLeave = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!reason.trim()) {
+      toast.error('Please state a reason for your leave request.');
+      return;
+    }
+
+    const activeUser = user || (users.length > 0 ? users[0] : null);
+
+    const userId = activeUser?.id || `usr-${Date.now()}`;
+    const userName = activeUser?.name || 'Registered Student';
+    const userAvatar = activeUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150';
+    const department = activeUser?.departmentName || (activeUser as any)?.department || 'Computer Science Dept';
+
+    let totalDays = 1;
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const diffTime = end.getTime() - start.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      totalDays = diffDays > 0 ? diffDays : 1;
+    }
+
+    addLeave({
+      userId,
+      userName,
+      userAvatar,
+      department,
+      leaveType,
+      startDate,
+      endDate,
+      totalDays,
+      reason: reason.trim(),
+    });
+
+    toast.success(`Leave application submitted for approval! (${totalDays} day${totalDays > 1 ? 's' : ''})`);
+    setReason('');
+    setIsApplyLeaveModalOpen(false);
+  };
 
   const totalUsers = users.length;
   const presentCount = attendance.filter((a) => a.status === 'present').length;
@@ -294,8 +344,11 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <Button variant="primary" onClick={() => navigate('/leave')} leftIcon={<Send className="w-4 h-4" />}>
+          <Button variant="primary" onClick={() => setIsApplyLeaveModalOpen(true)} leftIcon={<Send className="w-4 h-4" />}>
             Apply for Leave
+          </Button>
+          <Button variant="glass" onClick={() => navigate('/leave')} leftIcon={<FileCheck className="w-4 h-4 text-sky-400" />}>
+            View Leave Requests
           </Button>
           <Button variant="glass" onClick={() => navigate('/attendance')} leftIcon={<Clock className="w-4 h-4 text-emerald-400" />}>
             My Attendance Calendar
@@ -309,6 +362,81 @@ export const DashboardPage: React.FC = () => {
         <StatsCard title="Hours Logged This Month" value="0.0 hrs" subtitle="Avg 0 hrs / day" change="Pending" changeType="neutral" icon={<Clock className="w-6 h-6" />} iconBgColor="bg-sky-500/10 text-sky-500" />
         <StatsCard title="Remaining Leave Balance" value="14 Days" subtitle="Paid Medical & Annual Leave" change="Available" changeType="positive" icon={<Calendar className="w-6 h-6" />} iconBgColor="bg-amber-500/10 text-amber-500" />
       </div>
+
+      <Modal
+        isOpen={isApplyLeaveModalOpen}
+        onClose={() => setIsApplyLeaveModalOpen(false)}
+        title="Submit Leave Application"
+        description="Select dates and type for administrative approval."
+      >
+        <form onSubmit={handleApplyLeave} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+              Leave Category
+            </label>
+            <select
+              value={leaveType}
+              onChange={(e) => setLeaveType(e.target.value as any)}
+              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary/40 outline-none transition-all text-slate-900 dark:text-white"
+            >
+              <option value="annual">Annual Paid Leave</option>
+              <option value="medical">Medical / Sick Leave</option>
+              <option value="emergency">Emergency Family Leave</option>
+              <option value="unpaid">Unpaid Personal Leave</option>
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+                Start Date
+              </label>
+              <input
+                type="date"
+                required
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary/40 outline-none transition-all text-slate-900 dark:text-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+                End Date
+              </label>
+              <input
+                type="date"
+                required
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary/40 outline-none transition-all text-slate-900 dark:text-white"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+              Reason Justification
+            </label>
+            <textarea
+              rows={3}
+              required
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="State reason for absence..."
+              className="w-full px-3.5 py-2 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-primary/40 outline-none transition-all text-slate-900 dark:text-white"
+            />
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <Button type="button" variant="outline" onClick={() => setIsApplyLeaveModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary">
+              Submit Application
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

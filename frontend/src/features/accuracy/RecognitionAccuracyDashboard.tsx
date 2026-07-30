@@ -255,7 +255,7 @@ const RecognitionAccuracyDashboard: React.FC = () => {
                 {dashboardData.overview.failed_recognitions}
               </Typography>
               <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                Low confidence (<70%)
+                Low confidence (&lt;70%)
               </Typography>
             </CardContent>
           </Card>

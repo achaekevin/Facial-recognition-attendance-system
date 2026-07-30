@@ -3,11 +3,8 @@
 const CACHE_NAME = 'bioauth-pro-v1';
 const urlsToCache = [
   '/',
-  '/static/css/main.css',
-  '/static/js/main.js',
   '/manifest.json',
-  '/logo192.png',
-  '/logo512.png'
+  '/favicon.svg'
 ];
 
 // Install event - cache resources
@@ -49,18 +46,17 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Skip API calls (always fetch from network)
-  if (event.request.url.includes('/api/')) {
-    event.respondWith(
-      fetch(event.request)
-        .catch(() => {
-          // Return offline message for API calls
-          return new Response(
-            JSON.stringify({ error: 'Offline - API unavailable' }),
-            { headers: { 'Content-Type': 'application/json' } }
-          );
-        })
-    );
+  const url = event.request.url;
+
+  // Skip non-HTTP/HTTPS schemas, Vite dev server, HMR, and API requests
+  if (
+    !url.startsWith('http') ||
+    url.includes('/api/') ||
+    url.includes('/src/') ||
+    url.includes('/@vite/') ||
+    url.includes('/@id/') ||
+    url.includes('?import')
+  ) {
     return;
   }
 

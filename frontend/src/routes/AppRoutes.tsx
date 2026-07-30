@@ -35,7 +35,6 @@ import { VisitorPage } from '../features/visitors/VisitorPage';
 import { UnknownFacesPage } from '../features/unknown-faces/UnknownFacesPage';
 import { AnalyticsPage } from '../features/analytics/AnalyticsPage';
 import { ReportsPage } from '../features/reports/ReportsPage';
-import { AuditLogsPage } from '../features/audit-logs/AuditLogsPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
 import { AIInsightsPage } from '../features/ai-insights/AIInsightsPage';
