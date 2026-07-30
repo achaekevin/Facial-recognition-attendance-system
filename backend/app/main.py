@@ -29,6 +29,14 @@ from app.api.v1.websocket import router as websocket_router
 from app.api.v1.ai_insights import router as ai_insights_router
 from app.api.v1.liveness import router as liveness_router
 from app.api.v1.smart_verification import router as smart_verification_router
+from app.api.v1.monitoring import router as monitoring_router
+from app.api.v1.heatmaps import router as heatmaps_router
+from app.api.v1.replay import router as replay_router
+from app.api.v1.smart_notifications import router as smart_notifications_router
+from app.api.v1.attendance_corrections import router as attendance_corrections_router
+from app.api.v1.advanced_analytics import router as advanced_analytics_router
+from app.api.v1.offline_sync import router as offline_sync_router
+from app.api.v1.recognition_accuracy import router as recognition_accuracy_router
 from scripts.seed import seed_data
 
 limiter = Limiter(key_func=get_remote_address)
@@ -87,6 +95,14 @@ app.include_router(websocket_router, prefix=settings.API_V1_STR)
 app.include_router(ai_insights_router, prefix=settings.API_V1_STR)
 app.include_router(liveness_router, prefix=settings.API_V1_STR)
 app.include_router(smart_verification_router, prefix=settings.API_V1_STR)
+app.include_router(monitoring_router, prefix=settings.API_V1_STR)
+app.include_router(heatmaps_router, prefix=settings.API_V1_STR)
+app.include_router(replay_router, prefix=settings.API_V1_STR)
+app.include_router(smart_notifications_router, prefix=settings.API_V1_STR)
+app.include_router(attendance_corrections_router, prefix=settings.API_V1_STR)
+app.include_router(advanced_analytics_router, prefix=settings.API_V1_STR)
+app.include_router(offline_sync_router, prefix=settings.API_V1_STR)
+app.include_router(recognition_accuracy_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def root():

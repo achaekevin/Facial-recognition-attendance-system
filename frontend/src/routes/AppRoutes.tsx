@@ -8,6 +8,14 @@ import { ResetPasswordPage } from '../features/auth/ResetPasswordPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
 import { FaceEnrollmentPage } from '../features/face-enrollment/FaceEnrollmentPage';
 import { LiveRecognitionPage } from '../features/live-recognition/LiveRecognitionPage';
+import { LiveMonitoringPage } from '../features/live-monitoring/LiveMonitoringPage';
+import { BuildingMapPage } from '../features/building-map/BuildingMapPage';
+import { AttendanceHeatmapsPage } from '../features/heatmaps/AttendanceHeatmapsPage';
+import { RecognitionReplayPage } from '../features/replay/RecognitionReplayPage';
+import { NotificationsPage } from '../features/notifications/NotificationsPage';
+import AttendanceCorrectionWorkflowPage from '../features/corrections/AttendanceCorrectionWorkflowPage';
+import AdvancedAnalyticsDashboard from '../features/analytics/AdvancedAnalyticsDashboard';
+import RecognitionAccuracyDashboard from '../features/accuracy/RecognitionAccuracyDashboard';
 import { AttendancePage } from '../features/attendance/AttendancePage';
 import { UserListPage } from '../features/users/UserListPage';
 import { UserProfilePage } from '../features/users/UserProfilePage';
@@ -78,6 +86,71 @@ export const AppRoutes: React.FC = () => {
           element={
             <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'security_officer']}>
               <LiveRecognitionPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="live-monitoring"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'security_officer']}>
+              <LiveMonitoringPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="building-map"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'security_officer']}>
+              <BuildingMapPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="heatmaps"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'lecturer_teacher']}>
+              <AttendanceHeatmapsPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="replay"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'security_officer']}>
+              <RecognitionReplayPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route path="notifications" element={<NotificationsPage />} />
+        
+        <Route
+          path="attendance-corrections"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'lecturer_teacher']}>
+              <AttendanceCorrectionWorkflowPage />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="advanced-analytics"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'lecturer_teacher']}>
+              <AdvancedAnalyticsDashboard />
+            </RoleGuard>
+          }
+        />
+        
+        <Route
+          path="recognition-accuracy"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'security_officer']}>
+              <RecognitionAccuracyDashboard />
             </RoleGuard>
           }
         />

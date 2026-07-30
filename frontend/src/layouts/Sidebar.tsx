@@ -19,7 +19,14 @@ import {
   Sparkles,
   Lock,
   User as UserIcon,
-  Brain
+  Brain,
+  Activity,
+  MapPin,
+  Flame,
+  Bell,
+  FileEdit,
+  TrendingUp,
+  Target
 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { UserRole } from '../types';
@@ -58,6 +65,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           path: '/live-recognition', 
           icon: <ScanFace className="w-5 h-5" />, 
           badge: 'LIVE',
+          allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
+        },
+        { 
+          label: 'Live Monitoring', 
+          path: '/live-monitoring', 
+          icon: <Activity className="w-5 h-5" />, 
+          badge: 'REAL-TIME',
+          allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
+        },
+        { 
+          label: 'Building Map', 
+          path: '/building-map', 
+          icon: <MapPin className="w-5 h-5" />,
           allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
         },
         { 
@@ -116,6 +136,39 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
       title: 'Intelligence & Admin',
       items: [
         { 
+          label: 'Attendance Heatmaps', 
+          path: '/heatmaps', 
+          icon: <Flame className="w-5 h-5" />,
+          allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher'] 
+        },
+        { 
+          label: 'Recognition Replay', 
+          path: '/replay', 
+          icon: <History className="w-5 h-5" />,
+          allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
+        },
+        { 
+          label: 'Attendance Corrections', 
+          path: '/attendance-corrections', 
+          icon: <FileEdit className="w-5 h-5" />,
+          badge: 'NEW',
+          allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher'] 
+        },
+        { 
+          label: 'Advanced Analytics', 
+          path: '/advanced-analytics', 
+          icon: <TrendingUp className="w-5 h-5" />,
+          badge: 'NEW',
+          allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher'] 
+        },
+        { 
+          label: 'Recognition Accuracy', 
+          path: '/recognition-accuracy', 
+          icon: <Target className="w-5 h-5" />,
+          badge: 'NEW',
+          allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
+        },
+        { 
           label: 'AI Insights', 
           path: '/ai-insights', 
           icon: <Brain className="w-5 h-5" />,
@@ -129,6 +182,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher', 'security_officer'] 
         },
         { label: 'Reports', path: '/reports', icon: <FileText className="w-5 h-5" /> },
+        { label: 'Notifications', path: '/notifications', icon: <Bell className="w-5 h-5" /> },
         { 
           label: 'Audit Logs', 
           path: '/audit-logs', 

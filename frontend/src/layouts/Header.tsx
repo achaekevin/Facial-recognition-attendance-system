@@ -15,6 +15,7 @@ import {
 import { useAuthStore } from '../store/useAuthStore';
 import { useThemeStore } from '../store/useThemeStore';
 import { useNotificationStore } from '../store/useNotificationStore';
+import OfflineModeIndicator from '../features/offline/OfflineModeIndicator';
 import { UserRole } from '../types';
 import { Button } from '../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
@@ -142,6 +143,9 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           )}
         </button>
+
+        {/* Offline Mode Indicator */}
+        <OfflineModeIndicator />
 
         {/* User Profile Menu */}
         <div className="relative">
