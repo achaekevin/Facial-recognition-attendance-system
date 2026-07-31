@@ -35,7 +35,13 @@ export const VisitorPage: React.FC = () => {
       header: 'Visitor Details',
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
-          <img src={row.original.faceImageUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=250&q=80'} alt={row.original.fullName} className="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
+          {row.original.faceImageUrl ? (
+          <img src={row.original.faceImageUrl} alt={row.original.fullName} className="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-slate-700" />
+        ) : (
+          <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs border border-primary/30">
+            {row.original.fullName.charAt(0)}
+          </div>
+        )}
           <div>
             <p className="font-semibold text-slate-900 dark:text-white">{row.original.fullName}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">{row.original.company} • {row.original.email}</p>
@@ -130,7 +136,7 @@ export const VisitorPage: React.FC = () => {
         purpose: purpose.trim() || 'Official Meeting',
         expectedArrival: new Date().toISOString(),
         expectedDeparture: new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(), // 3 hours from now
-        faceImageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
+        faceImageUrl: '',
         status: 'checked_in',
       });
 

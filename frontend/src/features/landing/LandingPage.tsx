@@ -120,7 +120,7 @@ export const LandingPage: React.FC = () => {
         category: roleConfig.role === 'employee_student' ? 'student' : 'employee',
         departmentId: 'dept-1',
         departmentName: 'School of Computer Science & AI',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+        avatar: '',
         faceImageUrls: [],
         status: 'active',
         accuracyScore: 99.8,

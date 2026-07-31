@@ -89,7 +89,7 @@ async def process_live_frame(
     else:
         # Create unknown face log if low confidence match
         unknown_entry = UnknownFaceModel(
-            snapshot_url="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80",
+            snapshot_url="",
             captured_at=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             camera_id=frame.camera_id,
             camera_name="Main Gate Scanner",

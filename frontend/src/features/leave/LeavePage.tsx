@@ -141,7 +141,7 @@ export const LeavePage: React.FC = () => {
 
     const userId = activeUser?.id || `usr-${Date.now()}`;
     const userName = activeUser?.name || 'Registered Student';
-    const userAvatar = activeUser?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150';
+    const userAvatar = activeUser?.avatar || '';
     const department = activeUser?.departmentName || (activeUser as any)?.department || 'Computer Science Dept';
 
     // Calculate duration in days dynamically
