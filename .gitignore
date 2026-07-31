@@ -6,6 +6,11 @@ credentials.txt
 config.json
 secrets.json
 
+# Exclude all Markdown documentation files from git tracking (except root README.md)
+*.md
+**/*.md
+!README.md
+
 # Database files
 *.db
 *.sqlite
