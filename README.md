@@ -78,36 +78,3 @@ The platform allows organizations to record employee and student attendance auto
         ├── routes/         # App routing definitions
         └── services/       # Offline storage and API service handlers
 ```
-
-## Setup & Running
-
-### Backend Requirements & Launch
-1. Ensure Python 3.10+ and MySQL are installed.
-2. Install dependencies:
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   ```
-3. Initialize the database schema:
-   ```bash
-   python scripts/setup_mysql_database.py
-   ```
-4. Start the FastAPI backend server:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-
-### Frontend Launch
-1. Install Node.js dependencies:
-   ```bash
-   cd frontend
-   npm install
-   ```
-2. Start the Vite development server:
-   ```bash
-   npm run dev
-   ```
-
-## License
-
-All rights reserved.
