@@ -495,26 +495,7 @@ export const LoginPage: React.FC = () => {
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
 
-            {/* Quick Demo Seed Selector */}
-            <div className="pt-3 border-t border-slate-800/80 text-center">
-              <p className="text-[11px] font-semibold text-slate-400 mb-2">Quick Sign In With Seed Accounts:</p>
-              <div className="flex flex-wrap justify-center gap-1.5">
-                {availableRoles.map((r) => (
-                  <button
-                    key={r.role}
-                    type="button"
-                    onClick={() => handleQuickSeedFill(r)}
-                    className={`text-[10px] font-semibold px-2.5 py-1 rounded-lg border transition-all ${
-                      selectedRole === r.role && email === r.defaultEmail
-                        ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40'
-                        : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
-                    }`}
-                  >
-                    {r.label.split(' ')[0]}
-                  </button>
-                ))}
-              </div>
-            </div>
+
 
             <div className="text-center pt-2">
               <p className="text-xs text-slate-400">
