@@ -3,7 +3,10 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timedelta
-import qrcode
+try:
+    import qrcode
+except ImportError:
+    qrcode = None
 import io
 import base64
 import secrets

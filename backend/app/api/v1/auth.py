@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -6,11 +6,13 @@ from app.database.session import get_db
 from app.schemas.schemas import LoginRequest, TokenSchema, UserCreate, UserResponse, LockScreenUnlock, OTPVerifyRequest, ResetPasswordRequest
 from app.models.models import UserModel
 from app.core.security import verify_password, get_password_hash, create_access_token
+from app.core.limiter import limiter
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/login", response_model=TokenSchema)
-async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/15minute")
+async def login(request: Request, req: LoginRequest, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(UserModel).where(UserModel.email == req.email))
     user = result.scalars().first()
     
@@ -35,7 +37,8 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
     return {"access_token": access_token, "token_type": "bearer", "user": user_dict}
 
 @router.post("/register", response_model=UserResponse)
-async def register(req: UserCreate, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/15minute")
+async def register(request: Request, req: UserCreate, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(UserModel).where(UserModel.email == req.email))
     if result.scalars().first():
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -61,15 +64,18 @@ async def register(req: UserCreate, db: AsyncSession = Depends(get_db)):
     return new_user
 
 @router.post("/lock-screen-unlock")
-async def unlock_lock_screen(req: LockScreenUnlock):
+@limiter.limit("5/15minute")
+async def unlock_lock_screen(request: Request, req: LockScreenUnlock):
     if len(req.password) >= 4:
         return {"unlocked": True, "message": "Terminal unlocked successfully"}
     raise HTTPException(status_code=400, detail="Invalid unlock password")
 
 @router.post("/otp-verify")
-async def verify_otp(req: OTPVerifyRequest):
+@limiter.limit("5/15minute")
+async def verify_otp(request: Request, req: OTPVerifyRequest):
     return {"verified": True, "message": "Security PIN verified"}
 
 @router.post("/reset-password")
-async def reset_password(req: ResetPasswordRequest):
+@limiter.limit("5/15minute")
+async def reset_password(request: Request, req: ResetPasswordRequest):
     return {"success": True, "message": "Password updated successfully"}

@@ -48,7 +48,8 @@ from app.api.v1.integrations import router as integrations_router
 from app.api.v1.privacy import router as privacy_router
 from scripts.seed import seed_data
 
-limiter = Limiter(key_func=get_remote_address)
+from slowapi.middleware import SlowAPIMiddleware
+from app.core.limiter import limiter
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -74,6 +75,19 @@ app = FastAPI(
 # Configure Rate Limiter
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
+
+MAX_BODY_BYTES = 15 * 1024 * 1024  # 15 MB limit
+
+@app.middleware("http")
+async def enforce_payload_limit(request: Request, call_next):
+    content_length = request.headers.get("content-length")
+    if content_length and int(content_length) > MAX_BODY_BYTES:
+        return JSONResponse(
+            status_code=413,
+            content={"detail": "Payload too large. Maximum allowed size is 15MB."}
+        )
+    return await call_next(request)
 
 # Configure CORS
 app.add_middleware(

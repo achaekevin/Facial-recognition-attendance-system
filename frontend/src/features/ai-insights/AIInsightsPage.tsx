@@ -293,7 +293,7 @@ export const AIInsightsPage: React.FC = () => {
           <Card glass>
             <CardHeader>
               <CardTitle>Department Performance Analysis</CardTitle>
-              <CardDescription>AI-powered trend analysis by department</CardDescription>
+              <CardDescription>Automated trend analysis by department</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -344,7 +344,7 @@ export const AIInsightsPage: React.FC = () => {
               <AlertTriangle className="w-5 h-5 text-yellow-600" />
               Users At Risk of Chronic Absenteeism
             </CardTitle>
-            <CardDescription>AI-identified users requiring intervention</CardDescription>
+            <CardDescription>Automated risk identification for users requiring intervention</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -429,7 +429,7 @@ export const AIInsightsPage: React.FC = () => {
               <Calendar className="w-5 h-5 text-primary" />
               Weekly Attendance Forecast
             </CardTitle>
-            <CardDescription>AI-predicted attendance rates for the upcoming week</CardDescription>
+            <CardDescription>Predictive attendance rates for the upcoming week</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

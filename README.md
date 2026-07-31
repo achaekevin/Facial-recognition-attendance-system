@@ -1,134 +1,112 @@
 # Facial Recognition Attendance System
 
-Automate employee attendance tracking using facial recognition. Replaces traditional punch cards with secure biometric verification.
+An enterprise-ready biometric attendance management platform built with FastAPI, OpenCV, InsightFace, and React 19. It replaces manual sign-in sheets and punch cards with automated facial recognition, liveness verification, and real-time reporting.
 
-## What It Does
+## Overview
 
-Track employee attendance automatically with facial recognition cameras. The system recognizes faces, logs attendance, and detects spoofing attempts using liveness detection.
+The platform allows organizations to record employee and student attendance automatically through connected cameras, mobile devices, or dedicated terminal stations. It includes spoof protection, offline capabilities, location-based geofencing, multi-channel notifications, and compliance tools.
 
-Handles visitor registration, leave requests, department management, and report generation. Real-time updates via WebSocket connections.
+## Key Features
 
-## Built With
+### Biometric & Facial Recognition
+- Multi-Angle Face Enrollment: A guided step-by-step wizard captures facial embeddings across frontal and side angles to build a composite feature vector.
+- Presentation Attack Detection: Real-time liveness checking protects against photo printouts, digital screens, and deepfake replay attacks.
+- High-Accuracy Matching: Powered by 512-dimensional ArcFace feature vectors with customizable similarity thresholds.
 
-### Backend Stack
-- **FastAPI** - Async Python web framework with automatic API docs
-- **MySQL 8.0** - Database with SQLAlchemy ORM
-- **InsightFace** - Face recognition using ArcFace embeddings (512-dimensional vectors)
-- **OpenCV** - Image processing and computer vision
-- **Redis & Celery** - Caching and background task processing
-- **JWT & Bcrypt** - Token authentication and password hashing
-- **Docker** - Containerization
+### Flexible Check-In & Verification
+- Geofenced Mobile Check-In: Allows field or remote employees to check in from mobile devices after validating their GPS coordinates against authorized site perimeters.
+- Offline Edge Terminal Mode: Stores attendance records locally in IndexedDB when network connection drops, automatically syncing back to the server upon reconnection.
+- QR Code & PIN Fallback: Time-restricted QR codes and multi-factor PIN verification provide dependable backup methods during camera maintenance or low-light conditions.
 
-### Frontend Stack
-- **React 19** with **TypeScript** - Type-safe components
-- **Vite** - Fast build tool and dev server
-- **TailwindCSS** - Utility-first CSS
-- **Zustand** - Lightweight state management
-- **TanStack Query** - Server state and caching
-- **React Hook Form + Zod** - Form validation
-- **Recharts** - Analytics charts
-- **Framer Motion** - UI animations
-- **React Webcam** - Face enrollment capture
+### User Roles & Custom Dashboards
+- Role-Tailored Dashboards: Specific operational views designed for Super Admins, HR Managers, Department Heads / Lecturers, Security Officers, and Employees / Students.
+- Granular Permissions: Role-based access control protecting system endpoints, user profiles, and administrative overrides.
 
-## Main Features
+### Security, Audit & Privacy
+- Tamper-Evident Audit Ledger: SHA-256 cryptographic hash chains lock audit logs to detect and prevent unauthorized history modification.
+- Security Telemetry: Real-time tracking of failed authentication, camera disconnects, permission violations, and suspicious spoof attempts.
+- Biometric Privacy & GDPR Tools: Self-service privacy controls enabling users to view their stored biometric data, request full data exports, or permanently purge facial embeddings.
 
-**Facial Recognition**
-- 512-dimensional ArcFace embeddings for accurate matching
-- Liveness detection prevents photo/video spoofing
-- Configurable similarity threshold
+### Notifications & Communication
+- Multi-Channel Dispatch: Send instant automated alerts over SMTP Email, SMS via Twilio, WhatsApp webhooks, and live WebSocket broadcasts.
+- Customizable Trigger Rules: Notify HR or managers automatically on late arrivals, unexcused absences, or security flags.
 
-**User Roles & Permissions**
-- Six role types: Admin, HR, Manager, Employee, Security, Visitor
-- Role-based access control on all endpoints
-- Manual attendance override capability for HR
+### Analytics, AI & Reporting
+- AI Natural Language Assistant: Query attendance data directly with natural questions such as "Who was late this morning?" or "Show attendance trends for the Engineering department."
+- Automated Report Generation: Generate PDF and Excel summaries covering daily attendance, monthly summaries, and department-level stats.
+- Theme Customization: Full support for both dark mode and light mode across all dashboard components.
 
-**Attendance Tracking**
-- Automatic clock-in/clock-out on face detection
-- Real-time WebSocket updates
-- Late arrivals, early departures, and absence tracking
-- Excel and PDF export
+## Tech Stack
 
-**Camera Management**
-- Multiple RTSP camera support
-- Health monitoring per camera
-- Unknown face logging
+### Backend
+- FastAPI (Python async web framework)
+- MySQL 8.0 & SQLAlchemy ORM
+- InsightFace (ArcFace 512D embeddings) & OpenCV
+- Redis & Celery (Background queue and caching)
+- JWT & Bcrypt (Authentication and password security)
+- Cryptographic SHA-256 audit engine
 
-**Department & Leave Management**
-- Department hierarchy organization
-- Leave request submission and approval
-- Leave balance tracking
-
-**Analytics & Reporting**
-- Attendance trends dashboard
-- Multiple export formats
-- System activity audit logs
-
-## Advanced Enterprise Features
-
-**AI Assistant**
-Query attendance data using natural language. Ask "who was late today?" or "show me absences this week" for instant answers. Supports queries about late arrivals, absences, camera accuracy, departments, recognition failures, and trends.
-
-**QR Code Backup Attendance**
-Fallback method when facial recognition isn't practical. Generates time-limited QR codes valid for 5 minutes. All QR-based entries are flagged with the reason for using backup method.
-
-**Multi-Factor Attendance Verification**
-Combines multiple verification methods: facial recognition, geofence validation, device fingerprinting, QR codes, and PIN codes. Configure policies per department or employee category.
-
-**Security Center**
-Centralized monitoring for security events. Tracks authentication attempts, permission denials, unusual patterns, failed recognitions, and API access. Events categorized by severity with IP and user agent context.
-
-**AI-Powered Reports**
-Generates narrative summaries with contextual insights. Creates monthly overviews, weekly summaries, department reports, and performance analyses. Highlights patterns like consistently late employees or declining attendance rates.
-
-**System Health Dashboard**
-Real-time infrastructure monitoring. Tracks CPU, memory, disk space, and network latency. Shows service status for database, cache, recognition engine, and cameras. Alerts on failures with performance metrics.
-
-**Comprehensive Audit Trail**
-Logs every action with full context: user, action, timestamp, IP address, and user agent. Filter by user, action type, date range, or IP. Export for compliance reviews with statistics on active users and frequent actions.
-
-**API Integration Framework**
-Connects with HR systems, payroll platforms, email services, SMS gateways, and webhooks. Test integrations independently, sync on-demand, and monitor for errors. Automates data flow to enterprise tools.
-
-**Progressive Web App (PWA)**
-Installable on desktop and mobile. Works offline with cached data and queued actions. Supports push notifications and background sync for connectivity issues.
-
-## How It Works
-
-The system has three main parts:
-
-1. **Recognition Engine** - When a frame comes in from a camera, it detects faces, extracts facial features into a 512-dimensional vector, and compares it against enrolled faces in the database. If there's a match above the threshold, it logs the attendance.
-
-2. **Backend API** - FastAPI serves all the endpoints for user management, attendance records, reports, etc. It's fully async, so it can handle multiple camera feeds and API requests simultaneously without blocking.
-
-3. **Frontend Dashboard** - React-based admin interface where HR and managers can view attendance, manage employees, approve leave requests, and generate reports. Updates happen in real-time via WebSocket connections.
-
-## Security
-
-- All passwords are hashed using bcrypt before storage
-- JWT tokens for session management (no server-side session storage)
-- Role-based access control on every endpoint
-- Rate limiting to prevent API abuse
-- Input validation using Pydantic schemas to prevent injection attacks
-- CORS configured to only allow requests from the frontend domain
+### Frontend
+- React 19 & TypeScript
+- Vite
+- TailwindCSS & Framer Motion
+- Zustand (State management)
+- TanStack Query (Data fetching)
+- IndexedDB (Client-side offline storage)
+- Recharts (Analytics and visual charts)
 
 ## Project Structure
 
 ```
-├── backend/          # FastAPI application
+.
+├── backend/
 │   ├── app/
-│   │   ├── api/v1/   # API endpoints
-│   │   ├── models/   # Database models
-│   │   ├── schemas/  # Pydantic schemas
-│   │   └── recognition/ # Face recognition engine
-│   └── scripts/      # Database setup scripts
+│   │   ├── api/v1/         # FastAPI endpoints (Attendance, Privacy, Audit, Users, etc.)
+│   │   ├── attendance/     # Geofencing and check-in logic
+│   │   ├── audit/          # Cryptographic tamper-proof ledger
+│   │   ├── models/         # SQLAlchemy database models
+│   │   ├── notifications/  # Email, SMS, WhatsApp dispatchers
+│   │   ├── recognition/    # ArcFace engine and liveness detector
+│   │   └── schemas/        # Pydantic validation schemas
+│   └── scripts/            # Database initialization and setup tools
 │
-└── frontend/         # React application
-    ├── src/
-    │   ├── components/
-    │   ├── pages/
-    │   └── hooks/
-    └── public/
+└── frontend/
+    └── src/
+        ├── features/       # Feature modules (face enrollment, privacy, check-in, dashboard, security)
+        ├── components/     # Shared UI components
+        ├── layouts/        # Application layout and navigation sidebar
+        ├── routes/         # App routing definitions
+        └── services/       # Offline storage and API service handlers
 ```
+
+## Setup & Running
+
+### Backend Requirements & Launch
+1. Ensure Python 3.10+ and MySQL are installed.
+2. Install dependencies:
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   ```
+3. Initialize the database schema:
+   ```bash
+   python scripts/setup_mysql_database.py
+   ```
+4. Start the FastAPI backend server:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+### Frontend Launch
+1. Install Node.js dependencies:
+   ```bash
+   cd frontend
+   npm install
+   ```
+2. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
 
 ## License
 

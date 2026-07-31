@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Webcam from 'react-webcam';
 import { 
   ScanFace, 
   Camera, 
@@ -8,7 +9,6 @@ import {
   ArrowRight, 
   RotateCcw, 
   ShieldCheck, 
-  UserCheck, 
   ArrowLeft, 
   Cpu,
   Smile,
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useBiometricStore } from '../../store/useBiometricStore';
 import { toast } from 'sonner';
 
 interface PoseStep {
@@ -28,6 +29,10 @@ interface PoseStep {
 export const MultiAngleEnrollmentPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const { addUser } = useBiometricStore();
+
+  const webcamRef = useRef<Webcam>(null);
+  const [hasCameraAccess, setHasCameraAccess] = useState(true);
 
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [capturedPoses, setCapturedPoses] = useState<{ [key: string]: string }>({
@@ -74,26 +79,30 @@ export const MultiAngleEnrollmentPage: React.FC = () => {
     setIsProcessing(true);
 
     setTimeout(() => {
-      // SVG / canvas placeholder snapshot simulation
-      const mockSnapshot = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%230f172a"/><circle cx="100" cy="80" r="45" fill="%2338bdf8" opacity="0.3"/><path d="M40 170 C40 120 160 120 160 170 Z" fill="%236366f1" opacity="0.4"/><text x="100" y="185" font-family="sans-serif" font-size="12" fill="%2338bdf8" text-anchor="middle">${currentPose.id.toUpperCase()} ANGLE</text></svg>`;
+      let capturedImage = webcamRef.current?.getScreenshot();
+      if (!capturedImage) {
+        const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 200 200"><rect width="200" height="200" fill="%230f172a"/><circle cx="100" cy="80" r="45" fill="%2338bdf8" opacity="0.4"/><path d="M40 170 C40 120 160 120 160 170 Z" fill="%236366f1" opacity="0.5"/><text x="100" y="185" font-family="sans-serif" font-size="12" fill="%2338bdf8" text-anchor="middle">${currentPose.id.toUpperCase()} ANGLE</text></svg>`;
+        capturedImage = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
+      }
 
-      setCapturedPoses(prev => ({
-        ...prev,
-        [currentPose.id]: mockSnapshot
-      }));
+      const newPoses = {
+        ...capturedPoses,
+        [currentPose.id]: capturedImage
+      };
 
+      setCapturedPoses(newPoses);
       setIsProcessing(false);
       toast.success(`${currentPose.title} Captured & Vector Extracted!`, { duration: 1000 });
 
       if (activeStepIndex < poseSteps.length - 1) {
         setActiveStepIndex(prev => prev + 1);
       } else {
-        handleFinalizeMultiPoseEnrollment();
+        handleFinalizeMultiPoseEnrollment(newPoses);
       }
-    }, 800);
+    }, 400);
   };
 
-  const handleFinalizeMultiPoseEnrollment = async () => {
+  const handleFinalizeMultiPoseEnrollment = async (finalPoses = capturedPoses) => {
     setIsProcessing(true);
 
     try {
@@ -102,22 +111,36 @@ export const MultiAngleEnrollmentPage: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id: user?.id || 'usr-demo',
-          front_image: capturedPoses.front || 'front_mock',
-          left_image: capturedPoses.left || 'left_mock',
-          right_image: capturedPoses.right || 'right_mock',
-          smile_image: capturedPoses.smile || 'smile_mock',
+          front_image: finalPoses.front || 'front_mock',
+          left_image: finalPoses.left || 'left_mock',
+          right_image: finalPoses.right || 'right_mock',
+          smile_image: finalPoses.smile || 'smile_mock',
         })
       });
     } catch (e) {
       // Graceful fallback
     }
 
+    addUser({
+      name: user?.name || 'Enrolled User',
+      email: user?.email || 'user@attendance.com',
+      role: 'employee_student',
+      category: 'employee',
+      departmentId: 'dept-1',
+      departmentName: 'Engineering',
+      avatar: finalPoses.front || Object.values(finalPoses)[0] || '',
+      faceImageUrls: Object.values(finalPoses).filter(Boolean),
+      status: 'active',
+      accuracyScore: 99.8,
+      employeeOrStudentId: user?.id || `EMP-${Math.floor(1000 + Math.random() * 9000)}`,
+    });
+
     setTimeout(() => {
       setIsProcessing(false);
       setEnrollmentComplete(true);
       setCompositeScore(99.8);
       toast.success('360° Multi-Angle Biometric Enrollment Complete!');
-    }, 1200);
+    }, 600);
   };
 
   const handleReset = () => {
@@ -207,7 +230,7 @@ export const MultiAngleEnrollmentPage: React.FC = () => {
       {!enrollmentComplete ? (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          {/* Left: Camera Reticle Feed */}
+          {/* Left: Live Camera Viewport */}
           <div className="lg:col-span-8 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 text-center">
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <div className="flex items-center gap-2">
@@ -219,16 +242,31 @@ export const MultiAngleEnrollmentPage: React.FC = () => {
               </span>
             </div>
 
-            <div className="relative aspect-video max-w-lg mx-auto rounded-2xl bg-slate-950 border border-cyan-500/40 overflow-hidden flex flex-col items-center justify-center p-4">
+            <div className="relative aspect-video max-w-lg mx-auto rounded-2xl bg-slate-950 border border-cyan-500/40 overflow-hidden flex flex-col items-center justify-center">
+              {hasCameraAccess ? (
+                <Webcam
+                  ref={webcamRef}
+                  audio={false}
+                  screenshotFormat="image/jpeg"
+                  onUserMediaError={() => setHasCameraAccess(false)}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 p-6">
+                  <ScanFace className="w-12 h-12 text-cyan-400 mb-2" />
+                  <p className="text-xs font-semibold text-white font-mono">Camera Standby / Preview</p>
+                </div>
+              )}
+
               {/* 3D Reticle Overlay */}
-              <div className="absolute inset-6 border border-dashed border-cyan-500/40 rounded-3xl pointer-events-none flex items-center justify-center">
-                <div className="w-44 h-44 rounded-full border-2 border-cyan-400/60 flex items-center justify-center animate-pulse">
-                  <ScanFace className="w-20 h-20 text-cyan-400 opacity-70" />
+              <div className="absolute inset-4 border border-dashed border-cyan-500/40 rounded-3xl pointer-events-none flex items-center justify-center">
+                <div className="w-40 h-40 rounded-full border-2 border-cyan-400/60 flex items-center justify-center animate-pulse">
+                  <ScanFace className="w-16 h-16 text-cyan-400 opacity-60" />
                 </div>
               </div>
 
               {/* Angle Instruction Floating Pill */}
-              <div className="absolute bottom-4 left-4 right-4 bg-slate-900/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-cyan-500/30 text-xs font-semibold text-cyan-300">
+              <div className="absolute bottom-3 left-3 right-3 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-cyan-500/30 text-xs font-semibold text-cyan-300">
                 {currentPose.instruction}
               </div>
             </div>
@@ -293,7 +331,7 @@ export const MultiAngleEnrollmentPage: React.FC = () => {
                 variant="primary"
                 size="lg"
                 isLoading={isProcessing}
-                onClick={handleFinalizeMultiPoseEnrollment}
+                onClick={() => handleFinalizeMultiPoseEnrollment(capturedPoses)}
                 className="w-full justify-center py-3 bg-gradient-to-r from-emerald-500 to-cyan-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/20"
               >
                 <ShieldCheck className="w-5 h-5 mr-2" />

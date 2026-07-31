@@ -192,7 +192,7 @@ export const UnknownFacesPage: React.FC = () => {
             <ShieldAlert className="w-6 h-6 text-rose-500" /> Investigation Center
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Advanced unknown face investigation with AI-powered similarity matching
+            Advanced unknown face investigation with biometric similarity matching
           </p>
         </div>
       </div>
@@ -382,7 +382,7 @@ export const UnknownFacesPage: React.FC = () => {
           isOpen={isResolveModalOpen}
           onClose={() => setIsResolveModalOpen(false)}
           title="Investigation & Resolution Center"
-          description="Review AI-powered similarity matches and resolve investigation"
+          description="Review biometric similarity matches and resolve investigation"
         >
           <div className="space-y-4">
             <div className="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800">

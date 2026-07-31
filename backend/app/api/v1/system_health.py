@@ -1,6 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
-import psutil
+try:
+    import psutil
+except ImportError:
+    psutil = None
 import time
 
 router = APIRouter(prefix="/system-health", tags=["system-health"])

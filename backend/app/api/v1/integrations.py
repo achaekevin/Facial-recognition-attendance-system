@@ -2,7 +2,10 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional, Dict, List
 from datetime import datetime
-import requests
+try:
+    import requests
+except ImportError:
+    import httpx as requests
 
 router = APIRouter(prefix="/integrations", tags=["integrations"])
 

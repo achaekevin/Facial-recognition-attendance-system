@@ -202,7 +202,7 @@ export const LandingPage: React.FC = () => {
 
         <div className="space-y-4 max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
-            AI-Powered Facial Recognition <br />
+            Biometric Facial Recognition <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 via-primary to-indigo-600 dark:from-cyan-400 dark:via-primary dark:to-indigo-400">
               Attendance & Operations
             </span>
