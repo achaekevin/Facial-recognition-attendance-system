@@ -110,14 +110,21 @@ export const DashboardPage: React.FC = () => {
     setIsApplyLeaveModalOpen(false);
   };
 
-  const totalUsers = users.length;
-  const presentCount = attendance.filter((a) => a.status === 'present').length;
-  const lateCount = attendance.filter((a) => a.status === 'late').length;
+  const userList = users || [];
+  const attendanceList = attendance || [];
+  const cameraList = cameras || [];
+  const unknownList = unknownFaces || [];
+  const visitorList = visitors || [];
+  const leaveList = leaveRequests || [];
+
+  const totalUsers = userList.length;
+  const presentCount = attendanceList.filter((a) => a.status === 'present').length;
+  const lateCount = attendanceList.filter((a) => a.status === 'late').length;
   const absentCount = Math.max(0, totalUsers - presentCount - lateCount);
-  const unknownCount = unknownFaces.filter((u) => u.status === 'unassigned').length;
-  const activeCams = cameras.filter((c) => c.status === 'online').length;
-  const offlineCams = cameras.filter((c) => c.status === 'offline').length;
-  const pendingLeaves = leaveRequests.filter((l) => l.status === 'pending').length;
+  const unknownCount = unknownList.filter((u) => u.status === 'unassigned').length;
+  const activeCams = cameraList.filter((c) => c.status === 'online').length;
+  const offlineCams = cameraList.filter((c) => c.status === 'offline').length;
+  const pendingLeaves = leaveList.filter((l) => l.status === 'pending').length;
 
   const attendanceRate = totalUsers > 0 ? ((presentCount + lateCount) / totalUsers * 100).toFixed(1) + '%' : '98.5%';
 
@@ -343,7 +350,7 @@ export const DashboardPage: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard title="Surveillance Camera Nodes" value={`${activeCams || 12} Online`} subtitle={`${offlineCams} Offline Alert`} change="Online" changeType="positive" icon={<Camera className="w-6 h-6" />} iconBgColor="bg-rose-500/10 text-rose-500" />
           <StatsCard title="Unknown Face Alerts" value={unknownCount} subtitle="Requires Review" change={unknownCount > 0 ? 'Review Needed' : 'Clear'} changeType={unknownCount > 0 ? 'negative' : 'positive'} icon={<ShieldAlert className="w-6 h-6" />} iconBgColor="bg-amber-500/10 text-amber-500" />
-          <StatsCard title="Active Visitor Badges" value={visitors.length || 3} subtitle="On-Campus Visitors" change="3 Active" changeType="neutral" icon={<UserCheck className="w-6 h-6" />} iconBgColor="bg-emerald-500/10 text-emerald-500" />
+          <StatsCard title="Active Visitor Badges" value={visitorList.length || 3} subtitle="On-Campus Visitors" change="3 Active" changeType="neutral" icon={<UserCheck className="w-6 h-6" />} iconBgColor="bg-emerald-500/10 text-emerald-500" />
           <StatsCard title="Spoof Interceptions" value="8 Blocked" subtitle="2D / Video Playback Attacks" change="Protected" changeType="positive" icon={<ShieldCheck className="w-6 h-6" />} iconBgColor="bg-indigo-500/10 text-indigo-500" />
         </div>
       </div>

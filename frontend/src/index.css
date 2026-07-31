@@ -135,3 +135,47 @@
 .animate-radar {
   animation: radar-scan 6s linear infinite;
 }
+
+/* Dark Mode High-Contrast Text & Field Visibility Fixes */
+.dark input,
+.dark select,
+.dark textarea {
+  color: #f8fafc !important;
+  background-color: #0f172a;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.dark select option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+.dark label {
+  color: #e2e8f0 !important;
+}
+
+.dark table th,
+.dark table td {
+  color: #f1f5f9 !important;
+}
+
+/* Material UI Dark Mode Visibility Overrides */
+.dark .MuiTypography-root,
+.dark .MuiTableCell-root,
+.dark .MuiInputBase-input,
+.dark .MuiFormLabel-root,
+.dark .MuiInputLabel-root {
+  color: #f8fafc !important;
+}
+
+.dark .MuiPaper-root,
+.dark .MuiCard-root {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #1e293b !important;
+}
+

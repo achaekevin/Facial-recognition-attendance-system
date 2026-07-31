@@ -18,6 +18,7 @@ import { useThemeStore } from '../store/useThemeStore';
 import { useNotificationStore } from '../store/useNotificationStore';
 import OfflineModeIndicator from '../features/offline/OfflineModeIndicator';
 import { UserRole } from '../types';
+import { toast } from 'sonner';
 import { Button } from '../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 

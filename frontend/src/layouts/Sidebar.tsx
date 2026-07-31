@@ -40,33 +40,39 @@ import {
 import { useAuthStore } from '../store/useAuthStore';
 import { UserRole } from '../types';
 import { cn } from '../lib/utils';
-import { Badge } from '../components/ui/Badge';
-
-interface SidebarProps {
-  collapsed: boolean;
-  onToggleCollapse: () => void;
-}
 
 interface NavItem {
   label: string;
   path: string;
   icon: React.ReactNode;
-  allowedRoles?: UserRole[];
   badge?: string;
+  allowedRoles?: UserRole[];
 }
 
-interface NavGroup {
+interface NavSection {
   title: string;
   items: NavItem[];
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse }) => {
-  const location = useLocation();
-  const { user, activeRole, lockScreen } = useAuthStore();
+interface SidebarProps {
+  collapsed: boolean;
+  onToggleCollapse: () => void;
+  mobileOpen: boolean;
+  onMobileClose: () => void;
+}
 
-  const navGroups: NavGroup[] = [
+export const Sidebar: React.FC<SidebarProps> = ({
+  collapsed,
+  onToggleCollapse,
+  mobileOpen,
+  onMobileClose,
+}) => {
+  const location = useLocation();
+  const { activeRole } = useAuthStore();
+
+  const navSections: NavSection[] = [
     {
-      title: 'Main Operations',
+      title: 'Core Features',
       items: [
         { label: 'Landing Page', path: '/landing', icon: <Globe className="w-5 h-5 text-cyan-400" /> },
         { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
@@ -74,14 +80,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           label: 'Live Recognition', 
           path: '/live-recognition', 
           icon: <ScanFace className="w-5 h-5" />, 
-          badge: 'LIVE',
           allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
         },
         { 
           label: 'Live Monitoring', 
           path: '/live-monitoring', 
           icon: <Activity className="w-5 h-5" />, 
-          badge: 'REAL-TIME',
           allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
         },
         { 
@@ -100,14 +104,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           label: '360° Face Matrix', 
           path: '/face-enrollment-360', 
           icon: <ScanFace className="w-5 h-5" />,
-          badge: '360°',
           allowedRoles: ['super_admin', 'hr_admin', 'security_officer', 'employee_student', 'lecturer_teacher'] 
         },
         { 
           label: 'Mobile GPS Check-In', 
           path: '/mobile-checkin', 
           icon: <Navigation className="w-5 h-5" />,
-          badge: 'GPS',
           allowedRoles: ['super_admin', 'hr_admin', 'security_officer', 'employee_student', 'lecturer_teacher'] 
         },
         { label: 'Attendance', path: '/attendance', icon: <Clock className="w-5 h-5" /> },
@@ -151,7 +153,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           label: 'Unknown Faces', 
           path: '/unknown-faces', 
           icon: <ShieldAlert className="w-5 h-5" />, 
-          badge: 'ALERT',
           allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
         },
       ],
@@ -163,7 +164,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           label: 'AI Assistant', 
           path: '/ai-assistant', 
           icon: <Brain className="w-5 h-5" />,
-          badge: 'AI',
           allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher'] 
         },
         { 
@@ -182,35 +182,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           label: 'Attendance Corrections', 
           path: '/attendance-corrections', 
           icon: <FileEdit className="w-5 h-5" />,
-          badge: 'NEW',
           allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher'] 
         },
         { 
           label: 'Advanced Analytics', 
           path: '/advanced-analytics', 
           icon: <TrendingUp className="w-5 h-5" />,
-          badge: 'NEW',
           allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher'] 
         },
         { 
           label: 'Recognition Accuracy', 
           path: '/recognition-accuracy', 
           icon: <Target className="w-5 h-5" />,
-          badge: 'NEW',
           allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
         },
         { 
           label: 'AI Reports', 
           path: '/ai-reports', 
           icon: <TrendingUp className="w-5 h-5" />,
-          badge: 'NEW',
           allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher'] 
         },
         { 
           label: 'AI Insights', 
           path: '/ai-insights', 
           icon: <Brain className="w-5 h-5" />,
-          badge: 'AI',
           allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher'] 
         },
         { 
@@ -221,8 +216,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
         },
         { label: 'Reports', path: '/reports', icon: <FileText className="w-5 h-5" /> },
         { label: 'Notifications', path: '/notifications', icon: <Bell className="w-5 h-5" /> },
-        { label: 'Multi-Channel Gateways', path: '/notification-channels', icon: <Send className="w-5 h-5" />, badge: 'GATEWAY' },
-        { label: 'Biometric Privacy Portal', path: '/privacy-portal', icon: <Lock className="w-5 h-5" />, badge: 'GDPR' },
+        { label: 'Multi-Channel Gateways', path: '/notification-channels', icon: <Send className="w-5 h-5" /> },
+        { label: 'Biometric Privacy Portal', path: '/privacy-portal', icon: <Lock className="w-5 h-5" /> },
       ],
     },
     {
@@ -232,35 +227,30 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           label: 'Security Center', 
           path: '/security-center', 
           icon: <Shield className="w-5 h-5" />,
-          badge: 'NEW',
           allowedRoles: ['super_admin', 'security_officer'] 
         },
         { 
           label: 'QR Backup', 
           path: '/qr-backup', 
           icon: <QrCode className="w-5 h-5" />,
-          badge: 'NEW',
           allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
         },
         { 
           label: 'Multi-Factor Auth', 
           path: '/multi-factor', 
           icon: <ShieldCheck className="w-5 h-5" />,
-          badge: 'NEW',
           allowedRoles: ['super_admin'] 
         },
         { 
           label: 'System Health', 
           path: '/system-health', 
           icon: <HeartPulse className="w-5 h-5" />,
-          badge: 'NEW',
           allowedRoles: ['super_admin'] 
         },
         { 
           label: 'Audit Trail', 
           path: '/comprehensive-audit', 
           icon: <Receipt className="w-5 h-5" />,
-          badge: 'NEW',
           allowedRoles: ['super_admin', 'hr_admin'] 
         },
         { 
@@ -273,64 +263,59 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           label: 'Integrations', 
           path: '/integrations', 
           icon: <Cloud className="w-5 h-5" />,
-          badge: 'NEW',
           allowedRoles: ['super_admin'] 
         },
         { 
           label: 'System Settings', 
           path: '/settings', 
           icon: <Settings className="w-5 h-5" />,
-          allowedRoles: ['super_admin']
+          allowedRoles: ['super_admin', 'hr_admin'] 
         },
       ],
     },
   ];
 
-  return (
-    <aside
-      className={cn(
-        'bg-slate-900 text-slate-100 flex flex-col transition-all duration-300 relative border-r border-slate-800 z-20',
-        collapsed ? 'w-20' : 'w-64'
-      )}
-    >
+  const filterItemsByRole = (items: NavItem[]) => {
+    return items.filter((item) => {
+      if (activeRole === 'super_admin') return true;
+      if (!item.allowedRoles) return true;
+      return item.allowedRoles.includes(activeRole);
+    });
+  };
+
+  const content = (
+    <div className="flex flex-col h-full bg-slate-900 text-slate-300 border-r border-slate-800 select-none">
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800">
-        <div className="flex items-center space-x-3 overflow-hidden">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-blue-500/30">
+      <div className="flex items-center justify-between h-16 px-4 border-b border-slate-800">
+        <div className="flex items-center gap-3 overflow-hidden">
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-primary to-emerald-500 text-white font-bold text-lg shadow-lg shadow-primary/20 shrink-0">
             <ScanFace className="w-6 h-6" />
           </div>
           {!collapsed && (
             <div className="flex flex-col truncate">
-              <span className="font-bold text-base leading-tight tracking-wide text-white">BioAuth Pro</span>
-              <span className="text-[10px] text-blue-400 font-medium tracking-wider uppercase">Facial AI System</span>
+              <span className="font-extrabold text-white text-base tracking-tight truncate">
+                BioAuth System
+              </span>
+              <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest truncate">
+                Enterprise Vision
+              </span>
             </div>
           )}
         </div>
-        <button
-          onClick={onToggleCollapse}
-          className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
-        >
-          {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-        </button>
       </div>
 
       {/* Navigation Links */}
-      <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6 custom-scrollbar">
-        {navGroups.map((group, idx) => {
-          const visibleItems = group.items.filter((item) => {
-            if (activeRole === 'super_admin') return true;
-            if (!item.allowedRoles) return true;
-            return item.allowedRoles.includes(activeRole);
-          });
-
+      <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6 scrollbar-thin scrollbar-thumb-slate-800">
+        {navSections.map((section, idx) => {
+          const visibleItems = filterItemsByRole(section.items);
           if (visibleItems.length === 0) return null;
 
           return (
             <div key={idx} className="space-y-1">
               {!collapsed && (
-                <div className="px-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">
-                  {group.title}
-                </div>
+                <p className="px-3 text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                  {section.title}
+                </p>
               )}
               {visibleItems.map((item) => {
                 const isActive = location.pathname === item.path;
@@ -338,31 +323,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
                   <NavLink
                     key={item.path}
                     to={item.path}
+                    onClick={() => mobileOpen && onMobileClose()}
                     className={cn(
-                      'flex items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group relative',
+                      'flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 group',
                       isActive
-                        ? 'bg-blue-600/10 text-blue-400 font-semibold border-l-4 border-blue-500 rounded-l-none'
+                        ? 'bg-gradient-to-r from-primary to-indigo-600 text-white shadow-md shadow-primary/25'
                         : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
                     )}
                     title={collapsed ? item.label : undefined}
                   >
-                    <span className={cn('transition-colors', isActive ? 'text-blue-400' : 'text-slate-400 group-hover:text-slate-200')}>
-                      {item.icon}
-                    </span>
-                    {!collapsed && <span className="truncate">{item.label}</span>}
-                    {!collapsed && item.badge && (
-                      <Badge
-                        variant={
-                          item.badge === 'LIVE' ? 'success' : 
-                          item.badge === 'AI' ? 'primary' : 
-                          'danger'
-                        }
-                        pulse={item.badge === 'LIVE'}
-                        className="ml-auto text-[10px] px-1.5 py-0"
-                      >
-                        {item.badge}
-                      </Badge>
-                    )}
+                    <div className="flex items-center gap-3 truncate">
+                      <span className={cn('shrink-0 transition-transform duration-200 group-hover:scale-110', isActive ? 'text-white' : 'text-slate-400 group-hover:text-cyan-400')}>
+                        {item.icon}
+                      </span>
+                      {!collapsed && <span className="truncate">{item.label}</span>}
+                    </div>
                   </NavLink>
                 );
               })}
@@ -371,52 +346,54 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
         })}
       </div>
 
-      {/* User Footer Profile & Lock */}
-      <div className="p-3 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/30">
-        {!collapsed && user ? (
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 overflow-hidden">
-              {user.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="w-9 h-9 rounded-full object-cover border border-slate-200 dark:border-slate-700 shrink-0"
-                />
-              ) : (
-                <div className="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center border border-primary/30 font-bold text-xs shrink-0">
-                  <UserIcon className="w-4.5 h-4.5" />
-                </div>
-              )}
-              <div className="truncate">
-                <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">
-                  {user.name}
-                </p>
-                <p className="text-[10px] text-slate-400 uppercase tracking-wider font-mono">
-                  {activeRole.replace('_', ' ')}
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={lockScreen}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors"
-              title="Lock Screen"
-            >
-              <Lock className="w-4 h-4" />
-            </button>
-          </div>
-        ) : (
-          <div className="flex justify-center">
-            <button
-              onClick={lockScreen}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-              title="Lock Screen"
-            >
-              <Lock className="w-5 h-5" />
-            </button>
+      {/* Footer / Collapse Toggle */}
+      <div className="p-3 border-t border-slate-800 flex items-center justify-between">
+        {!collapsed && (
+          <div className="flex items-center gap-2 px-2 py-1 text-slate-400 text-xs font-mono">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Node Status: Live</span>
           </div>
         )}
+        <button
+          onClick={onToggleCollapse}
+          className="hidden md:flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors ml-auto"
+          title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+        >
+          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+        </button>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside
+        className={cn(
+          'hidden md:block fixed top-0 left-0 bottom-0 z-30 transition-all duration-300 ease-in-out',
+          collapsed ? 'w-16' : 'w-64'
+        )}
+      >
+        {content}
+      </aside>
+
+      {/* Mobile Drawer Overlay */}
+      {mobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm transition-opacity"
+          onClick={onMobileClose}
+        />
+      )}
+
+      {/* Mobile Drawer */}
+      <aside
+        className={cn(
+          'md:hidden fixed top-0 left-0 bottom-0 z-50 w-64 transition-transform duration-300 ease-in-out',
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
+        {content}
+      </aside>
+    </>
   );
 };
