@@ -104,6 +104,10 @@ const OfflineModeIndicator: React.FC = () => {
   const handleSync = async () => {
     setSyncing(true);
     try {
+      // Sync local IndexedDB offline queue
+      const { offlineStorage } = await import('../../services/offlineStorage');
+      await offlineStorage.syncPendingQueue();
+
       const response = await fetch('http://localhost:8000/api/v1/offline-sync/sync', {
         method: 'POST',
       });
@@ -113,8 +117,6 @@ const OfflineModeIndicator: React.FC = () => {
       await fetchStatus();
       await fetchQueue();
       await fetchHistory();
-      
-      console.log('Sync result:', result);
     } catch (error) {
       console.error('Error syncing:', error);
     } finally {

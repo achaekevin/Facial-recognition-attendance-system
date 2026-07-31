@@ -33,7 +33,9 @@ import {
   HeartPulse,
   Receipt,
   Cloud,
-  Globe
+  Globe,
+  Send,
+  Navigation
 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { UserRole } from '../types';
@@ -92,7 +94,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           label: 'Face Enrollment', 
           path: '/face-enrollment', 
           icon: <Sparkles className="w-5 h-5" />,
-          allowedRoles: ['super_admin', 'hr_admin', 'security_officer'] 
+          allowedRoles: ['super_admin', 'hr_admin', 'security_officer', 'employee_student'] 
+        },
+        { 
+          label: '360° Face Matrix', 
+          path: '/face-enrollment-360', 
+          icon: <ScanFace className="w-5 h-5" />,
+          badge: '360°',
+          allowedRoles: ['super_admin', 'hr_admin', 'security_officer', 'employee_student', 'lecturer_teacher'] 
+        },
+        { 
+          label: 'Mobile GPS Check-In', 
+          path: '/mobile-checkin', 
+          icon: <Navigation className="w-5 h-5" />,
+          badge: 'GPS',
+          allowedRoles: ['super_admin', 'hr_admin', 'security_officer', 'employee_student', 'lecturer_teacher'] 
         },
         { label: 'Attendance', path: '/attendance', icon: <Clock className="w-5 h-5" /> },
       ],
@@ -204,7 +220,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
           allowedRoles: ['super_admin', 'hr_admin', 'lecturer_teacher', 'security_officer'] 
         },
         { label: 'Reports', path: '/reports', icon: <FileText className="w-5 h-5" /> },
-        { label: 'Notifications', path: '/notifications', icon: <Bell className="w-5 h-5" /> }
+        { label: 'Notifications', path: '/notifications', icon: <Bell className="w-5 h-5" /> },
+        { label: 'Multi-Channel Gateways', path: '/notification-channels', icon: <Send className="w-5 h-5" />, badge: 'GATEWAY' },
+        { label: 'Biometric Privacy Portal', path: '/privacy-portal', icon: <Lock className="w-5 h-5" />, badge: 'GDPR' },
       ],
     },
     {

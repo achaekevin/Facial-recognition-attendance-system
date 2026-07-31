@@ -30,3 +30,13 @@ async def mark_notification_read(
         notif.is_read = True
         await db.commit()
     return {"success": True}
+
+from app.notifications.multi_channel import multi_channel_notifier
+
+@router.post("/send-multi-channel")
+async def send_multi_channel_notification(
+    payload: dict,
+    current_user = Depends(get_current_user)
+):
+    result = multi_channel_notifier.dispatch_multi_channel(payload)
+    return result

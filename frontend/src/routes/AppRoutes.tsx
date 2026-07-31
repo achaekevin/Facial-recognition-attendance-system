@@ -7,6 +7,7 @@ import { OTPVerificationPage } from '../features/auth/OTPVerificationPage';
 import { ResetPasswordPage } from '../features/auth/ResetPasswordPage';
 import { DashboardPage } from '../features/dashboard/DashboardPage';
 import { FaceEnrollmentPage } from '../features/face-enrollment/FaceEnrollmentPage';
+import { MultiAngleEnrollmentPage } from '../features/face-enrollment/MultiAngleEnrollmentPage';
 import { LiveRecognitionPage } from '../features/live-recognition/LiveRecognitionPage';
 import { LiveMonitoringPage } from '../features/live-monitoring/LiveMonitoringPage';
 import { BuildingMapPage } from '../features/building-map/BuildingMapPage';
@@ -39,6 +40,9 @@ import { SettingsPage } from '../features/settings/SettingsPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
 import { AIInsightsPage } from '../features/ai-insights/AIInsightsPage';
 import { LandingPage } from '../features/landing/LandingPage';
+import { MobileGeofenceCheckinPage } from '../features/mobile-checkin/MobileGeofenceCheckinPage';
+import { NotificationChannelsPage } from '../features/notifications/NotificationChannelsPage';
+import { BiometricPrivacyPage } from '../features/privacy/BiometricPrivacyPage';
 import { useAuthStore } from '../store/useAuthStore';
 import { UserRole } from '../types';
 
@@ -83,8 +87,43 @@ export const AppRoutes: React.FC = () => {
         <Route
           path="face-enrollment"
           element={
-            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'security_officer']}>
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'employee_student']}>
               <FaceEnrollmentPage />
+            </RoleGuard>
+          }
+        />
+        <Route
+          path="face-enrollment-360"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'employee_student', 'lecturer_teacher']}>
+              <MultiAngleEnrollmentPage />
+            </RoleGuard>
+          }
+        />
+
+        <Route
+          path="mobile-checkin"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'employee_student', 'lecturer_teacher', 'security_officer']}>
+              <MobileGeofenceCheckinPage />
+            </RoleGuard>
+          }
+        />
+
+        <Route
+          path="notification-channels"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'security_officer']}>
+              <NotificationChannelsPage />
+            </RoleGuard>
+          }
+        />
+
+        <Route
+          path="privacy-portal"
+          element={
+            <RoleGuard allowedRoles={['super_admin', 'hr_admin', 'employee_student', 'lecturer_teacher', 'security_officer']}>
+              <BiometricPrivacyPage />
             </RoleGuard>
           }
         />

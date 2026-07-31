@@ -49,6 +49,20 @@ class FaceEnrollRequest(BaseModel):
     image_base64_or_url: str
     pose_label: str = "Frontal"
 
+class MultiPoseEnrollmentRequest(BaseModel):
+    user_id: str
+    front_image: str
+    left_image: str
+    right_image: str
+    smile_image: str
+
+class MultiPoseEnrollmentResponse(BaseModel):
+    success: bool
+    user_id: str
+    composite_accuracy_score: float
+    message: str
+    enrolled_poses_count: int
+
 class FaceRecognitionFrame(BaseModel):
     camera_id: str
     image_data: str # base64 or URL
@@ -58,8 +72,21 @@ class FaceRecognitionResult(BaseModel):
     user_id: Optional[str] = None
     name: Optional[str] = None
     confidence_score: float
-    is_liveness_valid: bool
-    is_unknown: bool
+    is_liveness_valid: bool = True
+    is_unknown: bool = False
+
+class MobileGeofenceCheckinRequest(BaseModel):
+    user_id: str
+    image_data: str
+    latitude: float
+    longitude: float
+
+class MobileGeofenceCheckinResponse(BaseModel):
+    success: bool
+    status: str
+    distance_meters: float
+    message: str
+    timestamp: str
 
 # Attendance Schemas
 class AttendanceBase(BaseModel):

@@ -101,4 +101,20 @@ class BiometricEngine:
             return best_match
         return None
 
+    def aggregate_multi_pose_embeddings(self, pose_embeddings: List[List[float]]) -> List[float]:
+        """
+        Averages and unit-normalizes multi-pose 512-d embeddings (front, left, right, tilt/smile).
+        Creates a composite 360-degree biometric feature embedding.
+        """
+        if not pose_embeddings:
+            return [0.0] * self.embedding_dim
+        
+        arr = np.array(pose_embeddings)
+        avg_vector = np.mean(arr, axis=0)
+        norm = np.linalg.norm(avg_vector)
+        if norm == 0:
+            return [0.0] * self.embedding_dim
+        normalized = (avg_vector / norm).tolist()
+        return [round(x, 6) for x in normalized]
+
 biometric_engine = BiometricEngine()

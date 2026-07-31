@@ -45,6 +45,7 @@ from app.api.v1.ai_reports import router as ai_reports_router
 from app.api.v1.system_health import router as system_health_router
 from app.api.v1.audit_trail import router as audit_trail_router
 from app.api.v1.integrations import router as integrations_router
+from app.api.v1.privacy import router as privacy_router
 from scripts.seed import seed_data
 
 limiter = Limiter(key_func=get_remote_address)
@@ -119,6 +120,7 @@ app.include_router(ai_reports_router, prefix=settings.API_V1_STR)
 app.include_router(system_health_router, prefix=settings.API_V1_STR)
 app.include_router(audit_trail_router, prefix=settings.API_V1_STR)
 app.include_router(integrations_router, prefix=settings.API_V1_STR)
+app.include_router(privacy_router, prefix=settings.API_V1_STR)
 
 @app.get("/")
 async def root():
