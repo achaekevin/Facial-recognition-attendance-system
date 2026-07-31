@@ -169,7 +169,7 @@ export const LoginPage: React.FC = () => {
     login(userSession);
     switchRole(selectedRole);
     toast.success(`Welcome back, ${userSession.name}!`);
-    navigate('/dashboard');
+    navigate('/landing');
     setIsLoading(false);
     setIsScanning(false);
   };

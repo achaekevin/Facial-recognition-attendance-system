@@ -309,7 +309,7 @@ async def get_weekly_forecast(
 
 @router.get("/at-risk-users")
 async def get_at_risk_users(
-    risk_level: Optional[str] = Query(default=None, regex="^(critical|high|medium)$"),
+    risk_level: Optional[str] = Query(default=None, pattern="^(critical|high|medium)$"),
     days: int = Query(default=30, ge=7, le=90),
     db: AsyncSession = Depends(get_db),
     current_user = Depends(get_current_user)

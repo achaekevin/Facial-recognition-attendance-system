@@ -10,10 +10,21 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 def setup_database():
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        pass
+
+    db_host = os.getenv("MYSQL_HOST", "localhost")
+    db_user = os.getenv("MYSQL_USER", "root")
+    db_pass = os.getenv("MYSQL_PASSWORD", "")
+    db_port = int(os.getenv("MYSQL_PORT", "3306"))
+
     print("=" * 80)
     print("FACIAL RECOGNITION ATTENDANCE SYSTEM - MYSQL DATABASE SETUP")
     print("Target DB: facial_recognition_database")
-    print("User: root | Host: localhost:3306")
+    print(f"User: {db_user} | Host: {db_host}:{db_port}")
     print("=" * 80)
 
     try:
@@ -25,13 +36,13 @@ def setup_database():
 
     try:
         connection = pymysql.connect(
-            host="localhost",
-            user="root",
-            password="",
-            port=3306,
+            host=db_host,
+            user=db_user,
+            password=db_pass,
+            port=db_port,
             autocommit=True
         )
-        print("[SUCCESS] Connected to MySQL Server at localhost:3306 successfully!")
+        print(f"[SUCCESS] Connected to MySQL Server at {db_host}:{db_port} successfully!")
     except Exception as e:
         print(f"[ERROR] Failed to connect to MySQL Server: {e}")
         return False

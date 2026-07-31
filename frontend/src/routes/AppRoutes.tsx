@@ -38,13 +38,14 @@ import { ReportsPage } from '../features/reports/ReportsPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
 import { ProfilePage } from '../features/profile/ProfilePage';
 import { AIInsightsPage } from '../features/ai-insights/AIInsightsPage';
+import { LandingPage } from '../features/landing/LandingPage';
 import { useAuthStore } from '../store/useAuthStore';
 import { UserRole } from '../types';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/landing" replace />;
   }
   return <>{children}</>;
 };
@@ -61,7 +62,9 @@ const RoleGuard: React.FC<{ allowedRoles: UserRole[]; children: React.ReactNode 
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
-      {/* Public Auth Routes */}
+      {/* Public Landing & Auth Routes */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/landing" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/otp-verify" element={<OTPVerificationPage />} />
@@ -69,14 +72,12 @@ export const AppRoutes: React.FC = () => {
 
       {/* Protected App Routes inside MainLayout */}
       <Route
-        path="/"
         element={
           <ProtectedRoute>
             <MainLayout />
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
         
         <Route

@@ -12,21 +12,52 @@ class UserModel(Base):
     __tablename__ = "users"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=generate_uuid)
-    name: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
+    employee_or_student_id: Mapped[str] = mapped_column("employee_number_student_number", String(100), unique=True, nullable=False, default=generate_uuid)
+    username: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
-    hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
-    phone: Mapped[str] = mapped_column(String(50), nullable=True)
-    role: Mapped[str] = mapped_column(String(50), default="employee_student")
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    first_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    last_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    phone: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    role_id: Mapped[str] = mapped_column(String(50), default="employee_student")
     category: Mapped[str] = mapped_column(String(50), default="student")
     department_id: Mapped[Optional[str]] = mapped_column(String(36), nullable=True)
     department_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    avatar: Mapped[str] = mapped_column(Text, nullable=True)
+    avatar: Mapped[Optional[str]] = mapped_column("profile_photo", Text, nullable=True)
     face_image_urls: Mapped[list] = mapped_column(JSON, default=list)
     status: Mapped[str] = mapped_column(String(50), default="active")
     accuracy_score: Mapped[float] = mapped_column(Float, default=98.5)
-    employee_or_student_id: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     registered_at: Mapped[str] = mapped_column(String(50), default=lambda: datetime.date.today().isoformat())
     created_at: Mapped[datetime.datetime] = mapped_column(DateTime, default=datetime.datetime.utcnow)
+
+    @property
+    def name(self) -> str:
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        return self.first_name or self.last_name or self.username or self.email
+
+    @name.setter
+    def name(self, val: str):
+        if val:
+            parts = val.split(" ", 1)
+            self.first_name = parts[0]
+            self.last_name = parts[1] if len(parts) > 1 else ""
+
+    @property
+    def hashed_password(self) -> str:
+        return self.password_hash
+
+    @hashed_password.setter
+    def hashed_password(self, val: str):
+        self.password_hash = val
+
+    @property
+    def role(self) -> str:
+        return self.role_id
+
+    @role.setter
+    def role(self, val: str):
+        self.role_id = val
 
     embeddings = relationship("FaceEmbeddingModel", back_populates="user", cascade="all, delete-orphan")
 

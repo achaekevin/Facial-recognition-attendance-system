@@ -32,7 +32,8 @@ import {
   Shield,
   HeartPulse,
   Receipt,
-  Cloud
+  Cloud,
+  Globe
 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { UserRole } from '../types';
@@ -65,6 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggleCollapse })
     {
       title: 'Main Operations',
       items: [
+        { label: 'Landing Page', path: '/landing', icon: <Globe className="w-5 h-5 text-cyan-400" /> },
         { label: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
         { 
           label: 'Live Recognition', 

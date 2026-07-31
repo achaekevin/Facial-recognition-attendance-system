@@ -10,7 +10,8 @@ import {
   User as UserIcon, 
   Lock, 
   LogOut,
-  Menu
+  Menu,
+  Globe
 } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useThemeStore } from '../store/useThemeStore';
@@ -73,13 +74,22 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-card/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 px-4 sm:px-6 flex items-center justify-between shadow-xs">
-      {/* Left: Mobile Toggle & Global Search */}
+      {/* Left: Mobile Toggle, Landing Page Link & Global Search */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleSidebar}
           className="md:hidden p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
         >
           <Menu className="w-5 h-5" />
+        </button>
+
+        <button
+          onClick={() => navigate('/landing')}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 text-xs font-bold transition-all"
+          title="Return to System Landing Page"
+        >
+          <Globe className="w-4 h-4" />
+          <span className="hidden sm:inline">Landing Page</span>
         </button>
 
         {/* Global Search Bar */}
