@@ -42,6 +42,11 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
+        try {
+          localStorage.removeItem('frec_auth_storage');
+        } catch (e) {
+          // Ignore
+        }
         set({
           user: null,
           isAuthenticated: false,

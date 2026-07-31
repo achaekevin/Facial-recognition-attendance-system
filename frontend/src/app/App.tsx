@@ -29,7 +29,7 @@ export const App: React.FC = () => {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AppRoutes />
-        <Toaster position="top-right" theme={theme} richColors />
+        <Toaster position="top-right" theme={theme} richColors duration={1000} />
       </BrowserRouter>
     </QueryClientProvider>
   );

@@ -4,142 +4,155 @@ import {
   ScanFace, 
   ShieldCheck, 
   UserCheck, 
-  GraduationCap, 
   Camera, 
   Shield, 
-  User as UserIcon, 
   ArrowRight, 
   Zap, 
   LayoutDashboard, 
-  ChevronRight, 
   Sun, 
   Moon,
   LogOut,
   Clock,
-  Sparkles
+  Sparkles,
+  BarChart3,
+  QrCode,
+  CheckCircle2,
+  Lock,
+  UserPlus
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useThemeStore } from '../../store/useThemeStore';
-import { UserRole, User } from '../../types';
 import { Button } from '../../components/ui/Button';
 import { toast } from 'sonner';
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user, activeRole, login, switchRole, logout } = useAuthStore();
+  const { isAuthenticated, user, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
 
-  const rolePortals: { 
-    role: UserRole; 
-    label: string; 
-    icon: React.ReactNode; 
-    defaultEmail: string; 
-    defaultName: string;
-    tagline: string;
-  }[] = [
-    { 
-      role: 'employee_student', 
-      label: 'Student / Employee', 
-      icon: <UserIcon className="w-6 h-6 text-cyan-400" />,
-      defaultEmail: 'student@attendance.com', 
-      defaultName: 'Alex Rivera',
-      tagline: 'Self check-in history, personal profile & leave requests.',
-    },
-    { 
-      role: 'lecturer_teacher', 
-      label: 'Lecturer / Teacher', 
-      icon: <GraduationCap className="w-6 h-6 text-indigo-400" />,
-      defaultEmail: 'lecturer@attendance.com', 
-      defaultName: 'Prof. Sarah Jenkins',
-      tagline: 'Class rosters, department attendance & absence tracking.',
-    },
-    { 
-      role: 'hr_admin', 
-      label: 'HR Administrator', 
-      icon: <UserCheck className="w-6 h-6 text-emerald-400" />,
-      defaultEmail: 'hradmin@attendance.com', 
-      defaultName: 'Amanda Lewis',
-      tagline: 'Biometric enrollment, shift schedules & leave approvals.',
-    },
-    { 
-      role: 'security_officer', 
-      label: 'Security Officer', 
-      icon: <Camera className="w-6 h-6 text-amber-400" />,
-      defaultEmail: 'security@attendance.com', 
-      defaultName: 'Capt. James Miller',
-      tagline: 'Live camera monitoring, watchlist alerts & visitor logs.',
-    },
-    { 
-      role: 'super_admin', 
-      label: 'Super Administrator', 
-      icon: <Shield className="w-6 h-6 text-rose-400" />,
-      defaultEmail: 'superadmin@attendance.com', 
-      defaultName: 'Dr. Robert Vance',
-      tagline: 'Full system configuration, camera nodes & audit trails.',
-    },
-  ];
-
-  const handleLaunchRoleDashboard = (roleConfig: typeof rolePortals[0]) => {
-    if (!isAuthenticated || activeRole !== roleConfig.role) {
-      const userSession: User = {
-        id: `usr-${Date.now()}`,
-        name: roleConfig.defaultName,
-        email: roleConfig.defaultEmail,
-        phone: '+1 (555) 892-3011',
-        role: roleConfig.role,
-        category: roleConfig.role === 'employee_student' ? 'student' : 'employee',
-        departmentId: 'dept-1',
-        departmentName: 'School of Computer Science & AI',
-        avatar: '',
-        faceImageUrls: [],
-        status: 'active',
-        accuracyScore: 99.8,
-        registeredAt: new Date().toISOString().split('T')[0],
-        employeeOrStudentId: `ID-${Math.floor(1000 + Math.random() * 9000)}`,
-      };
-      login(userSession);
-      switchRole(roleConfig.role);
-    }
-    toast.success(`Entering ${roleConfig.label} Dashboard`);
-    navigate('/dashboard');
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    el?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans select-none relative overflow-x-hidden">
-      {/* Soft Ambient Background Glow */}
-      <div className="absolute top-0 left-0 w-full h-[600px] bg-[radial-gradient(ellipse_70%_70%_at_50%_-10%,rgba(56,189,248,0.12),rgba(0,0,0,0))]" />
+  const coreFeatures = [
+    {
+      icon: <Zap className="w-6 h-6 text-cyan-500 dark:text-cyan-400" />,
+      title: 'Touchless Biometric Check-In',
+      description: 'Instant facial recognition authentication allowing touchless check-ins for students and staff.'
+    },
+    {
+      icon: <ShieldCheck className="w-6 h-6 text-emerald-500 dark:text-emerald-400" />,
+      title: '3D Anti-Spoofing Liveness',
+      description: 'Advanced anti-spoofing filters that reject photo, video, and mask presentation attacks.'
+    },
+    {
+      icon: <Camera className="w-6 h-6 text-indigo-500 dark:text-indigo-400" />,
+      title: 'Real-Time Camera Telemetry',
+      description: 'Seamless integration with campus IP camera nodes for continuous perimeter attendance feeds.'
+    },
+    {
+      icon: <BarChart3 className="w-6 h-6 text-amber-500 dark:text-amber-400" />,
+      title: 'Automated Rosters & Reports',
+      description: 'Calculates shift hours, late arrivals, and overtime with instant CSV and PDF compliance exports.'
+    },
+    {
+      icon: <Lock className="w-6 h-6 text-rose-500 dark:text-rose-400" />,
+      title: 'Role-Based Access Control',
+      description: 'Tailored permissions for Students, Lecturers, HR Administrators, Security, and Super Admins.'
+    },
+    {
+      icon: <QrCode className="w-6 h-6 text-purple-500 dark:text-purple-400" />,
+      title: 'Offline & QR Pass Backup',
+      description: 'Local offline telemetry synchronization and QR pass verification ensuring uninterrupted uptime.'
+    }
+  ];
 
-      {/* Header Bar */}
-      <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80 px-4 sm:px-8 py-4 flex items-center justify-between">
+  const workflowSteps = [
+    {
+      step: '01',
+      title: 'Face Enrollment',
+      description: 'Securely extract and register 512-d facial biometric embeddings.'
+    },
+    {
+      step: '02',
+      title: 'Live Camera Verification',
+      description: 'Stand in front of any camera terminal for instant liveness detection.'
+    },
+    {
+      step: '03',
+      title: 'Automated Attendance Log',
+      description: 'Check-in is recorded in real time to your personal dashboard and reports.'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans select-none relative overflow-x-hidden transition-colors duration-300">
+      {/* Ambient Background Gradient Blur */}
+      <div className="absolute top-0 left-0 w-full h-[700px] bg-[radial-gradient(ellipse_80%_80%_at_50%_-15%,rgba(56,189,248,0.15),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-15%,rgba(56,189,248,0.15),rgba(0,0,0,0))]" />
+      <div className="absolute top-1/3 -left-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-2/3 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Top Header Navigation */}
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/80 px-4 sm:px-8 py-4 flex items-center justify-between transition-colors">
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
-            <ScanFace className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 via-primary to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20 ring-2 ring-cyan-400/20">
+            <ScanFace className="w-6 h-6 animate-pulse" />
           </div>
           <div>
-            <span className="font-extrabold text-lg text-white tracking-tight">BioAuth</span>
-            <span className="text-xs text-cyan-400 font-medium ml-1.5 hidden sm:inline">Attendance System</span>
+            <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5">
+              BioAuth <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-600 dark:from-cyan-400 dark:to-indigo-400">Enterprise</span>
+            </span>
+            <p className="text-[10px] text-cyan-600 dark:text-cyan-400 font-mono tracking-wider">AI Biometric System</p>
           </div>
         </div>
 
+        {/* Center Navigation Links */}
+        <nav className="hidden md:flex items-center space-x-8 text-xs font-semibold text-slate-600 dark:text-slate-300">
+          <button onClick={() => scrollToSection('features')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+            System Features
+          </button>
+          <button onClick={() => scrollToSection('workflow')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+            How It Works
+          </button>
+          <button onClick={() => scrollToSection('security')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+            Security & Compliance
+          </button>
+        </nav>
+
+        {/* Right Action Controls */}
         <div className="flex items-center space-x-3">
           <button
-            onClick={toggleTheme}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-            title="Toggle Theme"
+            onClick={() => {
+              toggleTheme();
+              toast.info(`Switched to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`, { duration: 1000 });
+            }}
+            className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 text-xs font-semibold"
+            title="Toggle Light / Dark Mode"
           >
-            {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4" />}
+            {theme === 'dark' ? (
+              <>
+                <Sun className="w-4 h-4 text-amber-400" />
+                <span className="hidden sm:inline">Light Mode</span>
+              </>
+            ) : (
+              <>
+                <Moon className="w-4 h-4 text-indigo-600" />
+                <span className="hidden sm:inline">Dark Mode</span>
+              </>
+            )}
           </button>
 
           {isAuthenticated ? (
             <div className="flex items-center space-x-3">
-              <span className="text-xs font-semibold text-slate-300 hidden sm:inline">
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 hidden sm:inline">
                 {user?.name}
               </span>
               <Button
                 variant="primary"
                 size="sm"
                 onClick={() => navigate('/dashboard')}
-                className="bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-xs font-bold shadow-md shadow-cyan-500/20"
+                className="bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-cyan-500/20"
               >
                 <LayoutDashboard className="w-4 h-4 mr-1.5" />
                 Go to My Dashboard
@@ -147,154 +160,176 @@ export const LandingPage: React.FC = () => {
               <button
                 onClick={() => {
                   logout();
-                  toast.info('Logged out');
+                  toast.info('Logged out successfully');
                 }}
-                className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors"
+                className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 title="Log Out"
               >
                 <LogOut className="w-4 h-4" />
               </button>
             </div>
           ) : (
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => navigate('/login')}
-              className="bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-xs font-bold shadow-md shadow-cyan-500/20"
-            >
-              Sign In
-            </Button>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/login?mode=signin')}
+                className="border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold"
+              >
+                Sign In
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => navigate('/login?mode=signup')}
+                className="bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-cyan-500/20"
+              >
+                <UserPlus className="w-3.5 h-3.5 mr-1.5" />
+                Sign Up
+              </Button>
+            </div>
           )}
         </div>
       </header>
 
-      {/* Main Clean Hero Section */}
-      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-16 text-center space-y-6">
+      {/* Hero Section */}
+      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-20 text-center space-y-8">
         
-        {/* Simple Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-semibold">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Touchless Facial Recognition System</span>
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 text-xs font-semibold backdrop-blur-md shadow-sm">
+          <Sparkles className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
+          <span>Next-Generation Touchless Attendance Authentication</span>
         </div>
 
-        {/* Hero Headline */}
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-3xl mx-auto">
-          Smart, Secure & Touchless <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-primary to-indigo-400">
-            Attendance Monitoring
-          </span>
-        </h1>
+        <div className="space-y-4 max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+            AI-Powered Facial Recognition <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 via-primary to-indigo-600 dark:from-cyan-400 dark:via-primary dark:to-indigo-400">
+              Attendance & Operations
+            </span>
+          </h1>
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+            Enterprise touchless attendance platform for institutions, universities, and corporations. Powered by 512-d facial embeddings, 3D anti-spoofing liveness checks, and real-time camera telemetries.
+          </p>
+        </div>
 
-        <p className="text-sm sm:text-base text-slate-300 max-w-xl mx-auto leading-relaxed">
-          Welcome to BioAuth Enterprise. Select your access role below or sign in to open your attendance dashboard.
-        </p>
-
-        {/* Primary CTA */}
+        {/* Action Buttons: Sign In / Sign Up */}
         {isAuthenticated ? (
-          <div className="pt-2">
+          <div className="pt-4 flex justify-center">
             <Button
               variant="primary"
               size="lg"
               onClick={() => navigate('/dashboard')}
-              className="px-8 py-3 text-sm font-bold bg-gradient-to-r from-cyan-500 via-primary to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 shadow-xl shadow-cyan-500/20 rounded-xl"
+              className="px-8 py-3.5 text-sm font-bold bg-gradient-to-r from-cyan-500 via-primary to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-xl shadow-cyan-500/25 rounded-2xl"
             >
               <LayoutDashboard className="w-5 h-5 mr-2" />
-              Enter My User Dashboard
+              Go to My Dashboard
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
         ) : (
-          <div className="pt-2">
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
               variant="primary"
               size="lg"
-              onClick={() => navigate('/login')}
-              className="px-8 py-3 text-sm font-bold bg-gradient-to-r from-cyan-500 via-primary to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 shadow-xl shadow-cyan-500/20 rounded-xl"
+              onClick={() => navigate('/login?mode=signin')}
+              className="w-full sm:w-auto px-8 py-3.5 text-sm font-bold bg-gradient-to-r from-cyan-500 via-primary to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-xl shadow-cyan-500/25 rounded-2xl"
             >
               <ScanFace className="w-5 h-5 mr-2" />
-              Sign In to System Portal
+              Sign In to Dashboard
               <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => navigate('/login?mode=signup')}
+              className="w-full sm:w-auto px-8 py-3.5 text-sm font-bold border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80 rounded-2xl"
+            >
+              <UserPlus className="w-5 h-5 mr-2 text-cyan-600 dark:text-cyan-400" />
+              Sign Up for Access
             </Button>
           </div>
         )}
       </section>
 
-      {/* Clean & Simple User Role Selection */}
-      <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-10">
-        <div className="text-center mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">Select Access Role to Open Dashboard</h2>
-          <p className="text-xs text-slate-400 mt-1">Click any role below to launch its dashboard interface.</p>
+      {/* Overview & Key System Features */}
+      <section id="features" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-200 dark:border-slate-800/80">
+        <div className="text-center space-y-3 mb-12">
+          <span className="text-xs font-bold font-mono text-cyan-600 dark:text-cyan-400 uppercase tracking-widest px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20">
+            System Overview
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
+            Comprehensive Biometric Capabilities
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+            Everything you need for seamless, automated attendance monitoring across your institution.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {rolePortals.map((item) => {
-            const isActive = isAuthenticated && activeRole === item.role;
-            return (
-              <div
-                key={item.role}
-                onClick={() => handleLaunchRoleDashboard(item)}
-                className={`p-5 rounded-2xl bg-slate-900/80 border backdrop-blur-md cursor-pointer transition-all duration-200 hover:border-cyan-500/50 hover:bg-slate-900 flex flex-col justify-between group ${
-                  isActive ? 'ring-2 ring-cyan-400 border-cyan-500' : 'border-slate-800'
-                }`}
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800">
-                      {item.icon}
-                    </div>
-                    {isActive && (
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        Active
-                      </span>
-                    )}
-                  </div>
-
-                  <div>
-                    <h3 className="text-base font-bold text-white group-hover:text-cyan-400 transition-colors">
-                      {item.label}
-                    </h3>
-                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                      {item.tagline}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="pt-4 flex items-center text-xs font-semibold text-cyan-400 group-hover:translate-x-1 transition-transform">
-                  <span>Open Dashboard</span>
-                  <ChevronRight className="w-4 h-4 ml-1" />
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {coreFeatures.map((feat, idx) => (
+            <div
+              key={idx}
+              className="p-6 rounded-3xl bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800/80 shadow-sm dark:shadow-none hover:border-cyan-500/40 dark:hover:border-slate-700 transition-all duration-200 space-y-3"
+            >
+              <div className="p-3 w-fit rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+                {feat.icon}
               </div>
-            );
-          })}
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">{feat.title}</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{feat.description}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* 3 Core System Features (Simple & Clean) */}
-      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12 border-t border-slate-800/60 mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-          <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800/60">
-            <Zap className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
-            <h4 className="text-sm font-bold text-white">Touchless Check-in</h4>
-            <p className="text-xs text-slate-400 mt-1">Instant facial verification without physical contact.</p>
-          </div>
+      {/* How It Works (Workflow Steps) */}
+      <section id="workflow" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-200 dark:border-slate-800/80">
+        <div className="text-center space-y-3 mb-12">
+          <span className="text-xs font-bold font-mono text-indigo-600 dark:text-indigo-400 uppercase tracking-widest px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+            Simple 3-Step Process
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
+            How BioAuth Works
+          </h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+            From enrollment to attendance verification in seconds.
+          </p>
+        </div>
 
-          <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800/60">
-            <ShieldCheck className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
-            <h4 className="text-sm font-bold text-white">Anti-Spoofing Liveness</h4>
-            <p className="text-xs text-slate-400 mt-1">Advanced 3D security prevents photo/video spoofing.</p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800/60">
-            <Clock className="w-6 h-6 text-indigo-400 mx-auto mb-2" />
-            <h4 className="text-sm font-bold text-white">Automated Reports</h4>
-            <p className="text-xs text-slate-400 mt-1">Real-time attendance logs, corrections & export options.</p>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {workflowSteps.map((item, idx) => (
+            <div key={idx} className="p-6 rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none relative space-y-3">
+              <span className="text-3xl font-extrabold font-mono text-cyan-600/40 dark:text-cyan-400/40">
+                {item.step}
+              </span>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">{item.title}</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{item.description}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="mt-auto border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 BioAuth Enterprise. All rights reserved.</p>
+      {/* Security & Compliance Banner */}
+      <section id="security" className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12 my-8 rounded-3xl bg-gradient-to-r from-slate-100 via-indigo-50 to-slate-100 dark:from-slate-900 dark:via-indigo-950/40 dark:to-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-4">
+        <div className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
+          <ShieldCheck className="w-4 h-4" />
+          Enterprise Security & Privacy Standard
+        </div>
+        <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Encrypted Biometric Protection</h3>
+        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          Biometric face embeddings are transformed into encrypted 512-dimensional vector hashes. No raw face photos are stored in recognition databases, ensuring maximum privacy compliance.
+        </p>
+      </section>
+
+      {/* Clean Footer */}
+      <footer className="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-8 px-4 sm:px-8 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center space-x-2">
+            <ScanFace className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
+            <span className="font-bold text-slate-900 dark:text-white">BioAuth Enterprise</span>
+            <span>- Biometric Attendance Platform</span>
+          </div>
+          <p>© 2026 BioAuth Inc. All rights reserved.</p>
+        </div>
       </footer>
     </div>
   );

@@ -233,7 +233,8 @@ export const Header: React.FC<HeaderProps> = ({
                   onClick={() => {
                     logout();
                     setUserMenuOpen(false);
-                    navigate('/login');
+                    toast.info('Logged out successfully', { duration: 1000 });
+                    navigate('/landing');
                   }}
                   className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl transition-colors"
                 >
