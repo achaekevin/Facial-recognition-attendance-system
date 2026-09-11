@@ -199,62 +199,167 @@ export const LandingPage: React.FC = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-20 text-center space-y-8">
+      <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-semibold backdrop-blur-md shadow-sm">
-          <Sparkles className="w-4 h-4" />
-          <span>Next-Generation Touchless Attendance Authentication</span>
+        {/* Left Content */}
+        <div className="space-y-8 text-center lg:text-left">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-semibold backdrop-blur-md shadow-sm">
+            <Sparkles className="w-4 h-4" />
+            <span>Next-Generation Touchless Attendance Authentication</span>
+          </div>
+
+          <div className="space-y-4">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight font-['Inter']">
+              Biometric Facial Recognition <br />
+              <span className="text-slate-900 dark:text-white">
+                Attendance & Operations
+              </span>
+            </h1>
+            <p className="text-lg sm:text-xl text-slate-900 dark:text-white max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+              Enterprise touchless attendance platform for institutions, universities, and corporations. Powered by 512-d facial embeddings, 3D anti-spoofing liveness checks, and real-time camera telemetries.
+            </p>
+          </div>
+
+          {/* Action Buttons */}
+          {isAuthenticated ? (
+            <div className="pt-4 flex justify-center lg:justify-start">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => navigate('/dashboard')}
+                className="px-8 py-3.5 text-sm font-bold bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white shadow-xl shadow-cyan-500/25 rounded-2xl"
+              >
+                <LayoutDashboard className="w-5 h-5 mr-2" />
+                Go to My Dashboard
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          ) : (
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => navigate('/login?mode=signin')}
+                className="w-full sm:w-auto px-8 py-3.5 text-sm font-bold bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white shadow-xl shadow-cyan-500/25 rounded-2xl"
+              >
+                <ScanFace className="w-5 h-5 mr-2" />
+                Sign In to Dashboard
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => navigate('/login?mode=signup')}
+                className="w-full sm:w-auto px-8 py-3.5 text-base font-bold border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80 rounded-2xl"
+              >
+                <UserPlus className="w-5 h-5 mr-2" />
+                Sign Up for Access
+              </Button>
+            </div>
+          )}
         </div>
 
-        <div className="space-y-4 max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight font-['Inter']">
-            Biometric Facial Recognition <br />
-            <span className="text-slate-900 dark:text-white">
-              Attendance & Operations
-            </span>
-          </h1>
-          <p className="text-lg sm:text-xl text-slate-900 dark:text-white max-w-2xl mx-auto leading-relaxed">
-            Enterprise touchless attendance platform for institutions, universities, and corporations. Powered by 512-d facial embeddings, 3D anti-spoofing liveness checks, and real-time camera telemetries.
-          </p>
-        </div>
+        {/* Right Animation - African University Students */}
+        <div className="relative flex justify-center lg:justify-end">
+          <div className="relative w-full max-w-lg">
+            {/* Main Illustration Container */}
+            <div className="relative bg-white dark:bg-slate-900 rounded-3xl p-8 border-2 border-slate-200 dark:border-slate-800 shadow-2xl">
+              
+              {/* University Campus Background */}
+              <div className="absolute inset-0 rounded-3xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 opacity-50"></div>
+                <svg className="absolute bottom-0 left-0 w-full h-24 opacity-20" viewBox="0 0 400 100">
+                  <rect x="50" y="60" width="40" height="40" fill="#0ea5e9" className="animate-pulse" />
+                  <rect x="120" y="40" width="50" height="60" fill="#06b6d4" />
+                  <rect x="200" y="50" width="45" height="50" fill="#0891b2" />
+                  <rect x="270" y="30" width="55" height="70" fill="#0e7490" />
+                </svg>
+              </div>
 
-        {/* Action Buttons: Sign In / Sign Up */}
-        {isAuthenticated ? (
-          <div className="pt-4 flex justify-center">
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => navigate('/dashboard')}
-              className="px-8 py-3.5 text-sm font-bold bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white shadow-xl shadow-cyan-500/25 rounded-2xl"
-            >
-              <LayoutDashboard className="w-5 h-5 mr-2" />
-              Go to My Dashboard
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+              {/* Facial Recognition Scanner Frame */}
+              <div className="relative z-10 mb-6">
+                <div className="bg-slate-900 dark:bg-black rounded-2xl p-4 shadow-lg">
+                  <div className="aspect-video bg-gradient-to-br from-cyan-400 to-blue-500 rounded-xl relative overflow-hidden">
+                    
+                    {/* Scanning Animation Overlay */}
+                    <div className="absolute inset-0">
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-400/30 to-transparent animate-pulse"></div>
+                      <div className="absolute top-0 left-0 w-full h-1 bg-cyan-300 animate-scanline"></div>
+                    </div>
+
+                    {/* African Student Silhouettes */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      {/* Student 1 - Female */}
+                      <div className="relative transform -translate-x-8 animate-pulse-subtle">
+                        <div className="w-16 h-16 bg-slate-800 dark:bg-slate-200 rounded-full relative">
+                          {/* Face features */}
+                          <div className="absolute top-3 left-4 w-2 h-2 bg-slate-600 dark:bg-slate-400 rounded-full"></div>
+                          <div className="absolute top-3 right-4 w-2 h-2 bg-slate-600 dark:bg-slate-400 rounded-full"></div>
+                          <div className="absolute top-7 left-1/2 transform -translate-x-1/2 w-1 h-2 bg-slate-600 dark:bg-slate-400 rounded-full"></div>
+                          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-1 bg-slate-600 dark:bg-slate-400 rounded-full"></div>
+                        </div>
+                        {/* Hair - Afro style */}
+                        <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-20 h-12 bg-slate-900 dark:bg-slate-100 rounded-full"></div>
+                      </div>
+
+                      {/* Student 2 - Male */}
+                      <div className="relative transform translate-x-8 animate-pulse-subtle" style={{ animationDelay: '1s' }}>
+                        <div className="w-16 h-16 bg-slate-700 dark:bg-slate-300 rounded-full relative">
+                          {/* Face features */}
+                          <div className="absolute top-3 left-4 w-2 h-2 bg-slate-500 dark:bg-slate-500 rounded-full"></div>
+                          <div className="absolute top-3 right-4 w-2 h-2 bg-slate-500 dark:bg-slate-500 rounded-full"></div>
+                          <div className="absolute top-7 left-1/2 transform -translate-x-1/2 w-1 h-2 bg-slate-500 dark:bg-slate-500 rounded-full"></div>
+                          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-1 bg-slate-500 dark:bg-slate-500 rounded-full"></div>
+                        </div>
+                        {/* Hair - Short style */}
+                        <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-18 h-8 bg-slate-900 dark:bg-slate-100 rounded-t-full"></div>
+                      </div>
+                    </div>
+
+                    {/* Recognition Status Indicators */}
+                    <div className="absolute top-2 left-2">
+                      <div className="flex items-center gap-1 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-bounce">
+                        <CheckCircle2 className="w-3 h-3" />
+                        <span>VERIFIED</span>
+                      </div>
+                    </div>
+                    
+                    {/* Face Detection Corners */}
+                    <div className="absolute top-4 left-4 w-6 h-6 border-l-2 border-t-2 border-cyan-300 animate-pulse"></div>
+                    <div className="absolute top-4 right-4 w-6 h-6 border-r-2 border-t-2 border-cyan-300 animate-pulse"></div>
+                    <div className="absolute bottom-4 left-4 w-6 h-6 border-l-2 border-b-2 border-cyan-300 animate-pulse"></div>
+                    <div className="absolute bottom-4 right-4 w-6 h-6 border-r-2 border-b-2 border-cyan-300 animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Attendance Stats */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-4 text-center">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400 animate-pulse">98%</div>
+                  <div className="text-xs font-semibold text-green-700 dark:text-green-300">Present Today</div>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4 text-center">
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 animate-pulse" style={{ animationDelay: '0.5s' }}>2.1s</div>
+                  <div className="text-xs font-semibold text-blue-700 dark:text-blue-300">Avg Recognition</div>
+                </div>
+              </div>
+
+              {/* Floating Elements */}
+              <div className="absolute -top-4 -right-4 w-8 h-8 bg-cyan-500 rounded-full animate-bounce opacity-80"></div>
+              <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-blue-500 rounded-full animate-pulse opacity-60"></div>
+              <div className="absolute top-1/2 -right-6 w-4 h-4 bg-green-500 rounded-full animate-ping opacity-40"></div>
+            </div>
+
+            {/* Additional University Elements */}
+            <div className="absolute -top-8 left-8 text-slate-400 dark:text-slate-600 animate-float">
+              <Clock className="w-6 h-6" />
+            </div>
+            <div className="absolute -bottom-6 right-12 text-slate-400 dark:text-slate-600 animate-float" style={{ animationDelay: '1s' }}>
+              <UserCheck className="w-8 h-8" />
+            </div>
           </div>
-        ) : (
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => navigate('/login?mode=signin')}
-              className="w-full sm:w-auto px-8 py-3.5 text-sm font-bold bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white shadow-xl shadow-cyan-500/25 rounded-2xl"
-            >
-              <ScanFace className="w-5 h-5 mr-2" />
-              Sign In to Dashboard
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={() => navigate('/login?mode=signup')}
-              className="w-full sm:w-auto px-8 py-3.5 text-base font-bold border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80 rounded-2xl"
-            >
-              <UserPlus className="w-5 h-5 mr-2" />
-              Sign Up for Access
-            </Button>
-          </div>
-        )}
+        </div>
       </section>
 
       {/* Overview & Key System Features */}
