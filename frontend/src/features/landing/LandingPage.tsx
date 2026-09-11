@@ -39,32 +39,38 @@ export const LandingPage: React.FC = () => {
     {
       icon: <Zap className="w-6 h-6 text-cyan-500 dark:text-cyan-400" />,
       title: 'Touchless Biometric Check-In',
-      description: 'Instant facial recognition authentication allowing touchless check-ins for students and staff.'
+      description: 'Instant facial recognition authentication allowing touchless check-ins for students and staff.',
+      borderColor: 'border-cyan-500/30 hover:border-cyan-500/60'
     },
     {
       icon: <ShieldCheck className="w-6 h-6 text-emerald-500 dark:text-emerald-400" />,
       title: '3D Anti-Spoofing Liveness',
-      description: 'Advanced anti-spoofing filters that reject photo, video, and mask presentation attacks.'
+      description: 'Advanced anti-spoofing filters that reject photo, video, and mask presentation attacks.',
+      borderColor: 'border-emerald-500/30 hover:border-emerald-500/60'
     },
     {
-      icon: <Camera className="w-6 h-6 text-indigo-500 dark:text-indigo-400" />,
+      icon: <Camera className="w-6 h-6 text-blue-500 dark:text-blue-400" />,
       title: 'Real-Time Camera Telemetry',
-      description: 'Seamless integration with campus IP camera nodes for continuous perimeter attendance feeds.'
+      description: 'Seamless integration with campus IP camera nodes for continuous perimeter attendance feeds.',
+      borderColor: 'border-blue-500/30 hover:border-blue-500/60'
     },
     {
       icon: <BarChart3 className="w-6 h-6 text-amber-500 dark:text-amber-400" />,
       title: 'Automated Rosters & Reports',
-      description: 'Calculates shift hours, late arrivals, and overtime with instant CSV and PDF compliance exports.'
+      description: 'Calculates shift hours, late arrivals, and overtime with instant CSV and PDF compliance exports.',
+      borderColor: 'border-amber-500/30 hover:border-amber-500/60'
     },
     {
       icon: <Lock className="w-6 h-6 text-rose-500 dark:text-rose-400" />,
       title: 'Role-Based Access Control',
-      description: 'Tailored permissions for Students, Lecturers, HR Administrators, Security, and Super Admins.'
+      description: 'Tailored permissions for Students, Lecturers, HR Administrators, Security, and Super Admins.',
+      borderColor: 'border-rose-500/30 hover:border-rose-500/60'
     },
     {
       icon: <QrCode className="w-6 h-6 text-purple-500 dark:text-purple-400" />,
       title: 'Offline & QR Pass Backup',
-      description: 'Local offline telemetry synchronization and QR pass verification ensuring uninterrupted uptime.'
+      description: 'Local offline telemetry synchronization and QR pass verification ensuring uninterrupted uptime.',
+      borderColor: 'border-purple-500/30 hover:border-purple-500/60'
     }
   ];
 
@@ -88,20 +94,20 @@ export const LandingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans select-none relative overflow-x-hidden transition-colors duration-300">
-      {/* Ambient Background Gradient Blur */}
-      <div className="absolute top-0 left-0 w-full h-[700px] bg-[radial-gradient(ellipse_80%_80%_at_50%_-15%,rgba(56,189,248,0.15),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-15%,rgba(56,189,248,0.15),rgba(0,0,0,0))]" />
-      <div className="absolute top-1/3 -left-40 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-2/3 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Ambient Background Blur */}
+      <div className="absolute top-0 left-0 w-full h-[700px] bg-[radial-gradient(ellipse_80%_80%_at_50%_-15%,rgba(14,165,233,0.08),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-15%,rgba(14,165,233,0.12),rgba(0,0,0,0))]" />
+      <div className="absolute top-1/3 -left-40 w-96 h-96 bg-cyan-500/5 dark:bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-2/3 -right-40 w-96 h-96 bg-cyan-400/5 dark:bg-cyan-400/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Top Header Navigation */}
-      <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800/80 px-4 sm:px-8 py-4 flex items-center justify-between transition-colors">
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/90 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 px-4 sm:px-8 py-4 flex items-center justify-between transition-colors">
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 via-primary to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20 ring-2 ring-cyan-400/20">
-            <ScanFace className="w-6 h-6 animate-pulse" />
+          <div className="w-10 h-10 rounded-2xl bg-cyan-500 dark:bg-cyan-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
+            <ScanFace className="w-6 h-6" />
           </div>
           <div>
             <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5">
-              BioAuth <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-indigo-600 dark:from-cyan-400 dark:to-indigo-400">Enterprise</span>
+              BioAuth <span className="text-cyan-600 dark:text-cyan-400">Enterprise</span>
             </span>
             <p className="text-[10px] text-cyan-600 dark:text-cyan-400 font-mono tracking-wider">AI Biometric System</p>
           </div>
@@ -152,7 +158,7 @@ export const LandingPage: React.FC = () => {
                 variant="primary"
                 size="sm"
                 onClick={() => navigate('/dashboard')}
-                className="bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-cyan-500/20"
+                className="bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-xs font-bold shadow-md shadow-cyan-500/20"
               >
                 <LayoutDashboard className="w-4 h-4 mr-1.5" />
                 Go to My Dashboard
@@ -182,7 +188,7 @@ export const LandingPage: React.FC = () => {
                 variant="primary"
                 size="sm"
                 onClick={() => navigate('/login?mode=signup')}
-                className="bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-cyan-500/20"
+                className="bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-xs font-bold shadow-md shadow-cyan-500/20"
               >
                 <UserPlus className="w-3.5 h-3.5 mr-1.5" />
                 Sign Up
@@ -201,9 +207,9 @@ export const LandingPage: React.FC = () => {
         </div>
 
         <div className="space-y-4 max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
+          <h1 className="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight font-['Inter']">
             Biometric Facial Recognition <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 via-primary to-indigo-600 dark:from-cyan-400 dark:via-primary dark:to-indigo-400">
+            <span className="text-cyan-600 dark:text-cyan-400">
               Attendance & Operations
             </span>
           </h1>
@@ -219,7 +225,7 @@ export const LandingPage: React.FC = () => {
               variant="primary"
               size="lg"
               onClick={() => navigate('/dashboard')}
-              className="px-8 py-3.5 text-sm font-bold bg-gradient-to-r from-cyan-500 via-primary to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-xl shadow-cyan-500/25 rounded-2xl"
+              className="px-8 py-3.5 text-sm font-bold bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white shadow-xl shadow-cyan-500/25 rounded-2xl"
             >
               <LayoutDashboard className="w-5 h-5 mr-2" />
               Go to My Dashboard
@@ -232,7 +238,7 @@ export const LandingPage: React.FC = () => {
               variant="primary"
               size="lg"
               onClick={() => navigate('/login?mode=signin')}
-              className="w-full sm:w-auto px-8 py-3.5 text-sm font-bold bg-gradient-to-r from-cyan-500 via-primary to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white shadow-xl shadow-cyan-500/25 rounded-2xl"
+              className="w-full sm:w-auto px-8 py-3.5 text-sm font-bold bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white shadow-xl shadow-cyan-500/25 rounded-2xl"
             >
               <ScanFace className="w-5 h-5 mr-2" />
               Sign In to Dashboard
@@ -269,7 +275,7 @@ export const LandingPage: React.FC = () => {
           {coreFeatures.map((feat, idx) => (
             <div
               key={idx}
-              className="p-6 rounded-3xl bg-white dark:bg-slate-900/70 border border-slate-200 dark:border-slate-800/80 shadow-sm dark:shadow-none hover:border-cyan-500/40 dark:hover:border-slate-700 transition-all duration-200 space-y-3"
+              className={`p-6 rounded-3xl bg-white dark:bg-slate-900 border-2 ${feat.borderColor} shadow-sm dark:shadow-none transition-all duration-200 space-y-3`}
             >
               <div className="p-3 w-fit rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
                 {feat.icon}
@@ -297,7 +303,7 @@ export const LandingPage: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {workflowSteps.map((item, idx) => (
-            <div key={idx} className="p-6 rounded-3xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none relative space-y-3">
+            <div key={idx} className="p-6 rounded-3xl bg-white dark:bg-slate-900 border-2 border-cyan-500/30 hover:border-cyan-500/60 shadow-sm dark:shadow-none relative space-y-3 transition-all duration-200">
               <span className="text-3xl font-extrabold font-mono text-cyan-600/40 dark:text-cyan-400/40">
                 {item.step}
               </span>
@@ -309,7 +315,7 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Security & Compliance Banner */}
-      <section id="security" className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12 my-8 rounded-3xl bg-gradient-to-r from-slate-100 via-indigo-50 to-slate-100 dark:from-slate-900 dark:via-indigo-950/40 dark:to-slate-900 border border-slate-200 dark:border-slate-800 text-center space-y-4">
+      <section id="security" className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12 my-8 rounded-3xl bg-white dark:bg-slate-900 border-2 border-emerald-500/30 text-center space-y-4 shadow-sm">
         <div className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
           <ShieldCheck className="w-4 h-4" />
           Enterprise Security & Privacy Standard
@@ -321,7 +327,7 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Clean Footer */}
-      <footer className="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 py-8 px-4 sm:px-8 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
+      <footer className="mt-auto border-t border-slate-200 dark:border-slate-900 bg-white dark:bg-black py-8 px-4 sm:px-8 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
             <ScanFace className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
