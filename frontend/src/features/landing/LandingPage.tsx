@@ -107,21 +107,21 @@ export const LandingPage: React.FC = () => {
           </div>
           <div>
             <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5">
-              BioAuth <span className="text-cyan-600 dark:text-cyan-400">Enterprise</span>
+              BioAuth <span className="text-slate-900 dark:text-white">Enterprise</span>
             </span>
-            <p className="text-[10px] text-cyan-600 dark:text-cyan-400 font-mono tracking-wider">AI Biometric System</p>
+            <p className="text-xs text-slate-900 dark:text-white font-mono tracking-wider">AI Biometric System</p>
           </div>
         </div>
 
         {/* Center Navigation Links */}
-        <nav className="hidden md:flex items-center space-x-8 text-xs font-semibold text-slate-600 dark:text-slate-300">
-          <button onClick={() => scrollToSection('features')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+        <nav className="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-900 dark:text-white">
+          <button onClick={() => scrollToSection('features')} className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
             System Features
           </button>
-          <button onClick={() => scrollToSection('workflow')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+          <button onClick={() => scrollToSection('workflow')} className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
             How It Works
           </button>
-          <button onClick={() => scrollToSection('security')} className="hover:text-slate-900 dark:hover:text-white transition-colors">
+          <button onClick={() => scrollToSection('security')} className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
             Security & Compliance
           </button>
         </nav>
@@ -133,17 +133,17 @@ export const LandingPage: React.FC = () => {
               toggleTheme();
               toast.info(`Switched to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`, { duration: 1000 });
             }}
-            className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 text-xs font-semibold"
+            className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2 text-sm font-semibold"
             title="Toggle Light / Dark Mode"
           >
             {theme === 'dark' ? (
               <>
-                <Sun className="w-4 h-4 text-amber-400" />
+                <Sun className="w-4 h-4" />
                 <span className="hidden sm:inline">Light Mode</span>
               </>
             ) : (
               <>
-                <Moon className="w-4 h-4 text-indigo-600" />
+                <Moon className="w-4 h-4" />
                 <span className="hidden sm:inline">Dark Mode</span>
               </>
             )}
@@ -151,14 +151,14 @@ export const LandingPage: React.FC = () => {
 
           {isAuthenticated ? (
             <div className="flex items-center space-x-3">
-              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 hidden sm:inline">
+              <span className="text-sm font-semibold text-slate-900 dark:text-white hidden sm:inline">
                 {user?.name}
               </span>
               <Button
                 variant="primary"
                 size="sm"
                 onClick={() => navigate('/dashboard')}
-                className="bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-xs font-bold shadow-md shadow-cyan-500/20"
+                className="bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-sm font-bold shadow-md shadow-cyan-500/20"
               >
                 <LayoutDashboard className="w-4 h-4 mr-1.5" />
                 Go to My Dashboard
@@ -168,7 +168,7 @@ export const LandingPage: React.FC = () => {
                   logout();
                   toast.info('Logged out successfully');
                 }}
-                className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                className="p-2 rounded-xl text-slate-900 dark:text-white hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 title="Log Out"
               >
                 <LogOut className="w-4 h-4" />
@@ -180,7 +180,7 @@ export const LandingPage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => navigate('/login?mode=signin')}
-                className="border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold"
+                className="border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-semibold"
               >
                 Sign In
               </Button>
@@ -188,7 +188,7 @@ export const LandingPage: React.FC = () => {
                 variant="primary"
                 size="sm"
                 onClick={() => navigate('/login?mode=signup')}
-                className="bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-xs font-bold shadow-md shadow-cyan-500/20"
+                className="bg-cyan-600 hover:bg-cyan-700 dark:bg-cyan-600 dark:hover:bg-cyan-700 text-white text-sm font-bold shadow-md shadow-cyan-500/20"
               >
                 <UserPlus className="w-3.5 h-3.5 mr-1.5" />
                 Sign Up
@@ -201,19 +201,19 @@ export const LandingPage: React.FC = () => {
       {/* Hero Section */}
       <section className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-20 text-center space-y-8">
         
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-600 dark:text-cyan-400 text-xs font-semibold backdrop-blur-md shadow-sm">
-          <Sparkles className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-semibold backdrop-blur-md shadow-sm">
+          <Sparkles className="w-4 h-4" />
           <span>Next-Generation Touchless Attendance Authentication</span>
         </div>
 
         <div className="space-y-4 max-w-4xl mx-auto">
           <h1 className="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight font-['Inter']">
             Biometric Facial Recognition <br />
-            <span className="text-cyan-600 dark:text-cyan-400">
+            <span className="text-slate-900 dark:text-white">
               Attendance & Operations
             </span>
           </h1>
-          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-slate-900 dark:text-white max-w-2xl mx-auto leading-relaxed">
             Enterprise touchless attendance platform for institutions, universities, and corporations. Powered by 512-d facial embeddings, 3D anti-spoofing liveness checks, and real-time camera telemetries.
           </p>
         </div>
@@ -248,9 +248,9 @@ export const LandingPage: React.FC = () => {
               variant="outline"
               size="lg"
               onClick={() => navigate('/login?mode=signup')}
-              className="w-full sm:w-auto px-8 py-3.5 text-sm font-bold border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/80 rounded-2xl"
+              className="w-full sm:w-auto px-8 py-3.5 text-base font-bold border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80 rounded-2xl"
             >
-              <UserPlus className="w-5 h-5 mr-2 text-cyan-600 dark:text-cyan-400" />
+              <UserPlus className="w-5 h-5 mr-2" />
               Sign Up for Access
             </Button>
           </div>
@@ -260,13 +260,13 @@ export const LandingPage: React.FC = () => {
       {/* Overview & Key System Features */}
       <section id="features" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-200 dark:border-slate-800/80">
         <div className="text-center space-y-3 mb-12">
-          <span className="text-xs font-bold font-mono text-cyan-600 dark:text-cyan-400 uppercase tracking-widest px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20">
+          <span className="text-sm font-bold font-mono text-slate-900 dark:text-white uppercase tracking-widest px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
             System Overview
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
             Comprehensive Biometric Capabilities
           </h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+          <p className="text-base text-slate-900 dark:text-white max-w-xl mx-auto">
             Everything you need for seamless, automated attendance monitoring across your institution.
           </p>
         </div>
@@ -277,11 +277,11 @@ export const LandingPage: React.FC = () => {
               key={idx}
               className={`p-6 rounded-3xl bg-white dark:bg-slate-900 border-2 ${feat.borderColor} shadow-sm dark:shadow-none transition-all duration-200 space-y-3`}
             >
-              <div className="p-3 w-fit rounded-2xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
+              <div className="p-3 w-fit rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                 {feat.icon}
               </div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">{feat.title}</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{feat.description}</p>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{feat.title}</h3>
+              <p className="text-sm text-slate-900 dark:text-white leading-relaxed">{feat.description}</p>
             </div>
           ))}
         </div>
@@ -290,13 +290,13 @@ export const LandingPage: React.FC = () => {
       {/* How It Works (Workflow Steps) */}
       <section id="workflow" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-200 dark:border-slate-800/80">
         <div className="text-center space-y-3 mb-12">
-          <span className="text-xs font-bold font-mono text-indigo-600 dark:text-indigo-400 uppercase tracking-widest px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20">
+          <span className="text-sm font-bold font-mono text-slate-900 dark:text-white uppercase tracking-widest px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
             Simple 3-Step Process
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
             How BioAuth Works
           </h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+          <p className="text-base text-slate-900 dark:text-white max-w-xl mx-auto">
             From enrollment to attendance verification in seconds.
           </p>
         </div>
@@ -304,11 +304,11 @@ export const LandingPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {workflowSteps.map((item, idx) => (
             <div key={idx} className="p-6 rounded-3xl bg-white dark:bg-slate-900 border-2 border-cyan-500/30 hover:border-cyan-500/60 shadow-sm dark:shadow-none relative space-y-3 transition-all duration-200">
-              <span className="text-3xl font-extrabold font-mono text-cyan-600/40 dark:text-cyan-400/40">
+              <span className="text-3xl font-extrabold font-mono text-slate-400 dark:text-slate-600">
                 {item.step}
               </span>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">{item.title}</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{item.description}</p>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">{item.title}</h3>
+              <p className="text-sm text-slate-900 dark:text-white leading-relaxed">{item.description}</p>
             </div>
           ))}
         </div>
@@ -316,21 +316,21 @@ export const LandingPage: React.FC = () => {
 
       {/* Security & Compliance Banner */}
       <section id="security" className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 py-12 my-8 rounded-3xl bg-white dark:bg-slate-900 border-2 border-emerald-500/30 text-center space-y-4 shadow-sm">
-        <div className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 text-slate-900 dark:text-white text-sm font-bold uppercase tracking-wider">
           <ShieldCheck className="w-4 h-4" />
           Enterprise Security & Privacy Standard
         </div>
         <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Encrypted Biometric Protection</h3>
-        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-base text-slate-900 dark:text-white max-w-2xl mx-auto leading-relaxed">
           Biometric face embeddings are transformed into encrypted 512-dimensional vector hashes. No raw face photos are stored in recognition databases, ensuring maximum privacy compliance.
         </p>
       </section>
 
       {/* Clean Footer */}
-      <footer className="mt-auto border-t border-slate-200 dark:border-slate-900 bg-white dark:bg-black py-8 px-4 sm:px-8 text-center text-xs text-slate-500 dark:text-slate-400 transition-colors">
+      <footer className="mt-auto border-t border-slate-200 dark:border-slate-900 bg-white dark:bg-black py-8 px-4 sm:px-8 text-center text-sm text-slate-900 dark:text-white transition-colors">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
-            <ScanFace className="w-4 h-4 text-cyan-500 dark:text-cyan-400" />
+            <ScanFace className="w-4 h-4" />
             <span className="font-bold text-slate-900 dark:text-white">BioAuth Enterprise</span>
             <span>- Biometric Attendance Platform</span>
           </div>
