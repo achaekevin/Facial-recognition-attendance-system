@@ -203,8 +203,6 @@ export const LandingPage: React.FC = () => {
         
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full">
-        {/* Video Background */}
-        <div className="absolute inset-0 w-full h-full">
           {/* Video Background with Fallback */}
           <video
             className="w-full h-full object-cover"
