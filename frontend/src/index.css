@@ -120,6 +120,16 @@
   animation: float 3s ease-in-out infinite;
 }
 
+/* Fade in out animation for landing page elements */
+@keyframes fade-in-out {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.animate-fade-in-out {
+  animation: fade-in-out 4s ease-in-out infinite;
+}
+
 /* Scanline animation */
 @keyframes scanline {
   0% { transform: translateY(-100%); opacity: 0; }
@@ -199,4 +209,50 @@
   color: #f8fafc !important;
   border-color: #1e293b !important;
 }
+
+/* Biometric Scanning Beam & Target HUD Animations */
+@keyframes biometric-scan-beam {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(140px);
+    opacity: 0;
+  }
+}
+
+.animate-scan-beam {
+  animation: biometric-scan-beam 2.2s ease-in-out infinite;
+}
+
+@keyframes bounce-short {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.animate-bounce-short {
+  animation: bounce-short 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-scan-beam,
+  .animate-bounce-short,
+  .animate-float,
+  .animate-radar,
+  .animate-scanline {
+    animation: none !important;
+  }
+}
+
 
