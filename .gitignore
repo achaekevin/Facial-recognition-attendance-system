@@ -53,6 +53,10 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Uploads & Biometric Storage
+uploads/
+backend/uploads/
+
 # Node modules
 node_modules/
 dist/
