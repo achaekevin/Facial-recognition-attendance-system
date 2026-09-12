@@ -47,9 +47,16 @@ class Settings(BaseSettings):
     ENABLE_LIVENESS: bool = True
     EMBEDDING_DIMENSION: int = 512
 
-    # Storage
+    # Storage & Image Encryption
     STORAGE_DIR: str = os.getenv("STORAGE_DIR", "./uploads")
+    IMAGE_ENCRYPTION_KEY: str = os.getenv("IMAGE_ENCRYPTION_KEY", "bioauth_master_biometric_image_aes256_key_32bytes!")
+    IMAGE_TOKEN_SECRET: str = os.getenv("IMAGE_TOKEN_SECRET", "bioauth_ephemeral_image_token_secret_salt")
+
+    @property
+    def ENCRYPTED_STORAGE_DIR(self) -> str:
+        return os.path.join(self.STORAGE_DIR, "encrypted")
 
 settings = Settings()
 
 os.makedirs(settings.STORAGE_DIR, exist_ok=True)
+os.makedirs(settings.ENCRYPTED_STORAGE_DIR, exist_ok=True)

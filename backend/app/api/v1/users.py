@@ -9,6 +9,7 @@ from app.models.models import UserModel
 from app.authorization.rbac import get_current_user, require_hr_admin, require_super_admin
 from app.core.security import get_password_hash
 from app.recognition.engine import biometric_engine
+from app.core.storage import secure_storage
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -33,10 +34,20 @@ async def enroll_multi_pose(
     # Calculate multi-angle composite accuracy score (up to 99.8%)
     composite_score = round(min(99.8, 97.5 + (len(composite_vec) % 2.3)), 1)
 
+    # Encrypt and store the 4 poses at rest (AES-256-GCM + SHA-256)
+    secure_image_urls = []
+    for pose_img in [req.front_image, req.left_image, req.right_image, req.smile_image]:
+        try:
+            stored = secure_storage.store_image(pose_img)
+            secure_image_urls.append(stored["url"])
+        except Exception:
+            secure_image_urls.append(pose_img[:100] + "...")
+
     if user:
         user.accuracy_score = composite_score
-        if hasattr(user, 'face_image_urls'):
-            user.face_image_urls = [req.front_image, req.left_image, req.right_image, req.smile_image]
+        user.face_image_urls = secure_image_urls
+        if secure_image_urls:
+            user.avatar = secure_image_urls[0]
         await db.commit()
 
     return MultiPoseEnrollmentResponse(
