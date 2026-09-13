@@ -14,7 +14,9 @@ import {
   BarChart3,
   QrCode,
   Lock,
-  UserPlus
+  UserPlus,
+  Fingerprint,
+  CheckCircle2
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useThemeStore } from '../../store/useThemeStore';
@@ -69,17 +71,97 @@ export const LandingPage: React.FC = () => {
     {
       step: '01',
       title: 'Face Enrollment',
-      description: 'Securely extract and register 512-d facial biometric embeddings.'
+      description: 'Securely extract and register 512-d facial biometric embeddings.',
+      badge: '512-D Neural Vector',
+      icon: <Fingerprint className="w-4 h-4 text-emerald-400" />,
+      microVisual: (
+        <div className="mt-4 p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800/80 font-mono text-xs text-slate-300 space-y-2">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Vector Extraction
+            </span>
+            <span className="text-slate-400 text-[10px]">Float32 Tensor</span>
+          </div>
+          <div className="p-2 rounded-lg bg-slate-900/90 border border-slate-800/90 text-[11px] text-slate-300 font-mono overflow-hidden text-ellipsis whitespace-nowrap">
+            [+0.184, -0.921, +0.407, +0.038, -0.512 ... +507]
+          </div>
+          <div className="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
+            <span>Encrypted Hash</span>
+            <span className="text-emerald-400 font-semibold font-mono">SHA-256 Verified</span>
+          </div>
+        </div>
+      )
     },
     {
       step: '02',
       title: 'Live Camera Verification',
-      description: 'Stand in front of any camera terminal for instant liveness detection.'
+      description: 'Stand in front of any camera terminal for instant liveness detection.',
+      badge: '3D Anti-Spoof Liveness',
+      icon: <Camera className="w-4 h-4 text-teal-400" />,
+      microVisual: (
+        <div className="mt-4 p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800/80 font-mono text-xs text-slate-300 space-y-2">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="flex items-center gap-1.5 text-teal-400 font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-teal-400 animate-pulse" />
+              Terminal Scan
+            </span>
+            <span className="text-teal-400 text-[10px] font-semibold">&lt; 0.24s Latency</span>
+          </div>
+          <div className="p-2.5 rounded-lg bg-slate-900/90 border border-teal-500/30 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-teal-500/10 border border-teal-500/30 flex items-center justify-center">
+                <ScanFace className="w-4 h-4 text-teal-400" />
+              </div>
+              <div className="text-[10px] font-sans">
+                <div className="font-semibold text-slate-200">Face Match: 99.8%</div>
+                <div className="text-slate-400">3D Depth &amp; Blink Passed</div>
+              </div>
+            </div>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-500/15 text-teal-300 border border-teal-500/30 font-bold">
+              PASS
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
+            <span>Presentation Attack Check</span>
+            <span className="text-teal-400 font-semibold">Zero Spoof</span>
+          </div>
+        </div>
+      )
     },
     {
       step: '03',
       title: 'Automated Attendance Log',
-      description: 'Check-in is recorded in real time to your personal dashboard and reports.'
+      description: 'Check-in is recorded in real time to your personal dashboard and reports.',
+      badge: 'Instant Ledger Sync',
+      icon: <CheckCircle2 className="w-4 h-4 text-emerald-400" />,
+      microVisual: (
+        <div className="mt-4 p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800/80 font-mono text-xs text-slate-300 space-y-2">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              Audit Recorded
+            </span>
+            <span className="text-emerald-400 text-[10px] font-semibold">Real-Time Sync</span>
+          </div>
+          <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div className="text-[10px] font-sans">
+                <div className="font-semibold text-emerald-200">Attendance Logged</div>
+                <div className="text-slate-400">Status: Present • On Time</div>
+              </div>
+            </div>
+            <span className="text-[10px] font-mono text-slate-300">08:30 AM</span>
+          </div>
+          <div className="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
+            <span>Export Pipeline</span>
+            <span className="text-emerald-400 font-semibold">CSV / PDF / API</span>
+          </div>
+        </div>
+      )
     }
   ];
 
@@ -293,29 +375,59 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* How It Works (Workflow Steps) */}
-      <section id="workflow" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-800">
-        <div className="text-center space-y-3 mb-12">
-          <span className="text-sm font-bold font-mono text-white uppercase tracking-widest px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
+      <section id="workflow" className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 border-t border-slate-800">
+        <div className="text-center space-y-3 mb-14">
+          <span className="inline-flex items-center gap-2 text-xs font-bold font-mono text-emerald-400 uppercase tracking-widest px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
             Simple 3-Step Process
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
             How BioAuth Works
           </h2>
-          <p className="text-base text-white max-w-xl mx-auto">
+          <p className="text-base text-slate-300 max-w-xl mx-auto">
             From enrollment to attendance verification in seconds.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {workflowSteps.map((item, idx) => (
-            <div key={idx} className="p-6 rounded-3xl bg-slate-800 border border-slate-700 hover:border-slate-600 shadow-md relative space-y-3 transition-all duration-200">
-              <span className="text-3xl font-extrabold font-mono text-white">
-                {item.step}
-              </span>
-              <h3 className="text-lg font-bold text-white">{item.title}</h3>
-              <p className="text-sm text-white leading-relaxed">{item.description}</p>
-            </div>
-          ))}
+        {/* Timeline Container with desktop connecting line */}
+        <div className="relative">
+          {/* Interconnected glowing timeline track on desktop (strictly emerald/teal, NO blue/purple) */}
+          <div className="hidden md:block absolute top-6 left-[16%] right-[16%] h-[2px] bg-slate-800 z-0">
+            <div className="h-full w-full bg-gradient-to-r from-emerald-500/20 via-emerald-400/60 to-emerald-500/20" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+            {workflowSteps.map((item, idx) => (
+              <div
+                key={idx}
+                className="group p-6 rounded-3xl bg-slate-900/80 backdrop-blur-xl border border-slate-800/90 hover:border-emerald-500/50 hover:shadow-[0_12px_36px_rgba(16,185,129,0.12)] hover:-translate-y-1.5 transition-all duration-300 relative space-y-4"
+              >
+                {/* Step Header with Number Pill and Badge */}
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-slate-900 border-2 border-emerald-500/40 group-hover:border-emerald-400 group-hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] flex items-center justify-center font-mono font-extrabold text-lg text-emerald-400 transition-all duration-200">
+                    {item.step}
+                  </div>
+                  <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-slate-800/90 text-slate-300 border border-slate-700/80 flex items-center gap-1.5 shadow-sm">
+                    {item.icon}
+                    <span>{item.badge}</span>
+                  </span>
+                </div>
+
+                {/* Content */}
+                <div className="space-y-1.5">
+                  <h3 className="text-lg font-bold text-white group-hover:text-emerald-300 transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+
+                {/* Biometric Micro-Visual Widget */}
+                {item.microVisual}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
