@@ -284,19 +284,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const content = (
-    <div className="flex flex-col h-full bg-slate-900 text-slate-300 border-r border-slate-800 select-none">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-r border-slate-200 dark:border-slate-800 select-none transition-colors duration-200">
       {/* Brand Header */}
-      <div className="flex items-center justify-between h-16 px-4 border-b border-slate-800">
+      <div className="flex items-center justify-between h-16 px-4 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-primary to-emerald-500 text-white font-bold text-lg shadow-lg shadow-primary/20 shrink-0">
             <ScanFace className="w-6 h-6" />
           </div>
           {!collapsed && (
             <div className="flex flex-col truncate">
-              <span className="font-extrabold text-white text-base tracking-tight truncate">
+              <span className="font-extrabold text-slate-900 dark:text-white text-base tracking-tight truncate">
                 BioAuth System
               </span>
-              <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest truncate">
+              <span className="text-[10px] font-mono text-cyan-600 dark:text-cyan-400 uppercase tracking-widest truncate font-semibold">
                 Enterprise Vision
               </span>
             </div>
@@ -305,7 +305,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Navigation Links */}
-      <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6 scrollbar-thin scrollbar-thumb-slate-800">
+      <div className="flex-1 overflow-y-auto py-4 px-3 space-y-6 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-800">
         {navSections.map((section, idx) => {
           const visibleItems = filterItemsByRole(section.items);
           if (visibleItems.length === 0) return null;
@@ -313,7 +313,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           return (
             <div key={idx} className="space-y-1">
               {!collapsed && (
-                <p className="px-3 text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                <p className="px-3 text-[10px] font-mono font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
                   {section.title}
                 </p>
               )}
@@ -328,12 +328,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       'flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 group',
                       isActive
                         ? 'bg-gradient-to-r from-primary to-indigo-600 text-white shadow-md shadow-primary/25'
-                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/60'
                     )}
                     title={collapsed ? item.label : undefined}
                   >
                     <div className="flex items-center gap-3 truncate">
-                      <span className={cn('shrink-0 transition-transform duration-200 group-hover:scale-110', isActive ? 'text-white' : 'text-slate-400 group-hover:text-cyan-400')}>
+                      <span className={cn('shrink-0 transition-transform duration-200 group-hover:scale-110', isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400 group-hover:text-primary')}>
                         {item.icon}
                       </span>
                       {!collapsed && <span className="truncate">{item.label}</span>}
@@ -347,16 +347,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Footer / Collapse Toggle */}
-      <div className="p-3 border-t border-slate-800 flex items-center justify-between">
+      <div className="p-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
         {!collapsed && (
-          <div className="flex items-center gap-2 px-2 py-1 text-slate-400 text-xs font-mono">
+          <div className="flex items-center gap-2 px-2 py-1 text-slate-500 dark:text-slate-400 text-xs font-mono">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>Node Status: Live</span>
           </div>
         )}
         <button
           onClick={onToggleCollapse}
-          className="hidden md:flex items-center justify-center w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white hover:bg-slate-700 transition-colors ml-auto"
+          className="hidden md:flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors ml-auto"
           title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}

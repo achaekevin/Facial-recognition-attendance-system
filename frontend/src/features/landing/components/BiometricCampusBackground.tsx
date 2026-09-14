@@ -145,9 +145,10 @@ export const BiometricCampusBackground: React.FC = () => {
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
+        const isDark = document.documentElement.classList.contains('dark');
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(15, 23, 42, 0.35)';
         ctx.fill();
 
         for (let j = i + 1; j < particles.length; j++) {
@@ -160,7 +161,9 @@ export const BiometricCampusBackground: React.FC = () => {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 * (1 - dist / 110)})`;
+            ctx.strokeStyle = isDark 
+              ? `rgba(255, 255, 255, ${0.15 * (1 - dist / 110)})`
+              : `rgba(15, 23, 42, ${0.15 * (1 - dist / 110)})`;
             ctx.lineWidth = 0.6;
             ctx.stroke();
           }
@@ -181,11 +184,11 @@ export const BiometricCampusBackground: React.FC = () => {
   const currentScene = SCENES[activeSceneIdx];
 
   return (
-    <div className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none bg-[#0f172a]">
+    <div className="absolute inset-0 w-full h-full overflow-hidden select-none pointer-events-none bg-slate-100 dark:bg-[#0f172a] transition-colors duration-300">
       {/* Base Solid Background */}
-      <div className="absolute inset-0 bg-[#0f172a]" />
+      <div className="absolute inset-0 bg-slate-100 dark:bg-[#0f172a]" />
 
-      {/* University Background Images with Cinematic Crossfade */}
+      {/* University Background Images with Cinematic Crossfade - High Visibility */}
       <div className="absolute inset-0 w-full h-full">
         {SCENES.map((scene, idx) => {
           const isActive = idx === activeSceneIdx;
@@ -199,7 +202,7 @@ export const BiometricCampusBackground: React.FC = () => {
               <img
                 src={scene.image}
                 alt={`${scene.location} - African University Biometric Attendance`}
-                className={`w-full h-full object-cover object-center transition-transform duration-[12000ms] ease-out ${
+                className={`w-full h-full object-cover object-center brightness-100 contrast-[1.05] saturate-[1.1] transition-transform duration-[12000ms] ease-out ${
                   !prefersReducedMotion && isActive ? 'scale-105 translate-x-1' : 'scale-100'
                 }`}
                 loading="eager"
@@ -209,31 +212,31 @@ export const BiometricCampusBackground: React.FC = () => {
         })}
       </div>
 
-      {/* Contrast Gradient: High contrast on the left for hero text, transparent on the right */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/90 via-50% to-transparent" />
+      {/* Refined Contrast Gradient: Feathered on the left for hero text, completely transparent across center & right so students are fully visible */}
+      <div className="absolute inset-0 bg-gradient-to-r from-slate-50/95 via-slate-50/50 via-35% to-transparent dark:from-[#0f172a]/95 dark:via-[#0f172a]/45 dark:via-35% dark:to-transparent transition-colors duration-300" />
 
-      {/* Top & Bottom clean edge transitions */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-[#0f172a]/80" />
+      {/* Subtle edge feathering at bottom only */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-50/80 via-transparent to-transparent dark:from-[#0f172a]/80 dark:via-transparent dark:to-transparent transition-colors duration-300" />
 
       {/* Biometric Constellation Particles */}
       {!prefersReducedMotion && (
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 w-full h-full pointer-events-none opacity-40 hidden sm:block"
+          className="absolute inset-0 w-full h-full pointer-events-none opacity-50 hidden sm:block"
         />
       )}
 
       {/* Biometric Face HUD & Verification Telemetry */}
       <div className="absolute inset-0 w-full h-full pointer-events-none">
         {/* Camera Node Telemetry Badge */}
-        <div className="hidden lg:flex items-center gap-2.5 absolute top-24 right-8 lg:right-16 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-slate-700 text-white text-xs font-mono shadow-xl">
-          <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-          <span className="font-semibold tracking-wide text-white">{currentScene.cameraName}</span>
-          <span className="text-white/60">|</span>
-          <span className="text-white text-[11px]">{currentScene.location}</span>
-          <div className="flex items-center gap-1 ml-2 text-white">
-            <Wifi className="w-3 h-3 text-white" />
-            <span className="text-[10px] text-white">14ms</span>
+        <div className="hidden lg:flex items-center gap-2.5 absolute top-24 right-8 lg:right-16 px-4 py-2 rounded-full bg-white/95 dark:bg-slate-900/90 border border-emerald-500/40 dark:border-slate-700 text-slate-900 dark:text-white text-xs font-mono shadow-2xl backdrop-blur-md transition-colors duration-200">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="font-bold tracking-wide text-slate-900 dark:text-white">{currentScene.cameraName}</span>
+          <span className="text-slate-400">|</span>
+          <span className="text-slate-700 dark:text-slate-300 text-[11px] font-sans font-medium">{currentScene.location}</span>
+          <div className="flex items-center gap-1 ml-2 text-emerald-600 dark:text-emerald-400">
+            <Wifi className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-bold">14ms</span>
           </div>
         </div>
 
@@ -248,47 +251,47 @@ export const BiometricCampusBackground: React.FC = () => {
           }}
         >
           {/* Target Face Bounding Box Frame */}
-          <div className="relative w-full h-full rounded-lg border border-white/80 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+          <div className="relative w-full h-full rounded-xl border-2 border-emerald-500 dark:border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.5)]">
             {/* Corner Brackets */}
-            <div className="absolute -top-1.5 -left-1.5 w-3.5 h-3.5 border-t-2 border-l-2 border-white" />
-            <div className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 border-t-2 border-r-2 border-white" />
-            <div className="absolute -bottom-1.5 -left-1.5 w-3.5 h-3.5 border-b-2 border-l-2 border-white" />
-            <div className="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 border-b-2 border-r-2 border-white" />
+            <div className="absolute -top-2 -left-2 w-4 h-4 border-t-3 border-l-3 border-emerald-600 dark:border-emerald-300" />
+            <div className="absolute -top-2 -right-2 w-4 h-4 border-t-3 border-r-3 border-emerald-600 dark:border-emerald-300" />
+            <div className="absolute -bottom-2 -left-2 w-4 h-4 border-b-3 border-l-3 border-emerald-600 dark:border-emerald-300" />
+            <div className="absolute -bottom-2 -right-2 w-4 h-4 border-b-3 border-r-3 border-emerald-600 dark:border-emerald-300" />
 
             {/* Scanning Laser Beam */}
             {scanPhase === 1 && !prefersReducedMotion && (
-              <div className="absolute inset-x-0 h-0.5 bg-white shadow-[0_0_8px_rgba(255,255,255,0.9)] animate-scan-beam" />
+              <div className="absolute inset-x-0 h-1 bg-emerald-500 dark:bg-emerald-400 shadow-[0_0_14px_#10b981] animate-scan-beam" />
             )}
 
             {/* Status Pill Badge attached to Target Box */}
             <div className="absolute -top-9 right-0">
               {scanPhase === 0 && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-white text-[11px] font-mono shadow-lg whitespace-nowrap animate-pulse">
-                  <Eye className="w-3 h-3 text-white" />
-                  <span className="text-white">FACE DETECTED</span>
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/95 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white text-[11px] font-mono shadow-lg whitespace-nowrap animate-pulse">
+                  <Eye className="w-3 h-3 text-emerald-600 dark:text-white" />
+                  <span>FACE DETECTED</span>
                 </div>
               )}
 
               {scanPhase === 1 && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-white text-[11px] font-mono shadow-lg whitespace-nowrap">
-                  <Cpu className="w-3 h-3 text-white animate-spin" />
-                  <span className="text-white">EXTRACTING 512-D VECTOR (99.4%)</span>
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/95 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white text-[11px] font-mono shadow-lg whitespace-nowrap">
+                  <Cpu className="w-3 h-3 text-emerald-600 dark:text-white animate-spin" />
+                  <span>EXTRACTING 512-D VECTOR (99.4%)</span>
                 </div>
               )}
 
               {scanPhase === 2 && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-white text-[11px] font-mono shadow-lg whitespace-nowrap">
-                  <ShieldCheck className="w-3 h-3 text-white" />
-                  <span className="text-white">3D LIVENESS: PASS</span>
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-white/95 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white text-[11px] font-mono shadow-lg whitespace-nowrap">
+                  <ShieldCheck className="w-3 h-3 text-emerald-600 dark:text-white" />
+                  <span className="text-emerald-700 dark:text-emerald-300 font-bold">3D LIVENESS: PASS</span>
                 </div>
               )}
 
               {scanPhase === 3 && (
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800 border border-slate-600 text-white text-xs font-mono shadow-xl whitespace-nowrap">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/95 dark:bg-slate-800 border border-emerald-500/40 dark:border-slate-600 text-slate-800 dark:text-white text-xs font-mono shadow-xl whitespace-nowrap">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <div>
-                    <span className="font-bold text-white">{currentScene.studentName}</span>
-                    <span className="text-white ml-1.5 font-sans font-medium text-[11px]">
+                    <span className="font-bold text-slate-900 dark:text-white">{currentScene.studentName}</span>
+                    <span className="text-emerald-700 dark:text-emerald-300 ml-1.5 font-sans font-medium text-[11px]">
                       • Verified & Logged
                     </span>
                   </div>
@@ -298,7 +301,7 @@ export const BiometricCampusBackground: React.FC = () => {
 
             {/* Student ID & Dept Meta tag at bottom */}
             <div className="absolute -bottom-8 left-0 whitespace-nowrap">
-              <div className="text-[10px] font-mono text-white bg-slate-800 px-2 py-0.5 rounded border border-slate-700 shadow-md">
+              <div className="text-[10px] font-mono text-slate-700 dark:text-white bg-white/95 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 shadow-md">
                 ID: {currentScene.studentId} • {currentScene.department}
               </div>
             </div>

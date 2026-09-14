@@ -7,6 +7,20 @@ interface ThemeState {
   setTheme: (theme: 'light' | 'dark') => void;
 }
 
+const applyThemeToDOM = (theme: 'light' | 'dark') => {
+  if (typeof document !== 'undefined') {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.style.colorScheme = 'dark';
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.style.colorScheme = 'light';
+    }
+  }
+};
+
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
@@ -14,24 +28,21 @@ export const useThemeStore = create<ThemeState>()(
       toggleTheme: () =>
         set((state) => {
           const next = state.theme === 'light' ? 'dark' : 'light';
-          if (next === 'dark') {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
+          applyThemeToDOM(next);
           return { theme: next };
         }),
       setTheme: (theme) => {
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
+        applyThemeToDOM(theme);
         set({ theme });
       },
     }),
     {
       name: 'frec_theme_storage',
+      onRehydrateStorage: () => (state) => {
+        if (state?.theme) {
+          applyThemeToDOM(state.theme);
+        }
+      },
     }
   )
 );
