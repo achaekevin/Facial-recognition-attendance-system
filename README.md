@@ -32,7 +32,7 @@ The platform allows organizations to record employee and student attendance auto
 - Customizable Trigger Rules: Notify HR or managers automatically on late arrivals, unexcused absences, or security flags.
 
 ### Analytics, AI & Reporting
-- AI Natural Language Assistant: Query attendance data directly with natural questions such as "Who was late this morning?" or "Show attendance trends for the Engineering department."
+- AI Natural Language Assistant: Query attendance data directly with natural questions such as "Who was late this morning?".
 - Automated Report Generation: Generate PDF and Excel summaries covering daily attendance, monthly summaries, and department-level stats.
 - Theme Customization: Full support for both dark mode and light mode across all dashboard components.
 
